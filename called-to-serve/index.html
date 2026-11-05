@@ -607,6 +607,7 @@
 
           <div class="actions">
             <button class="gold" id="awardButton" type="button">Award points &amp; finish card</button>
+            <button class="secondary" id="skipButton" type="button">Skip card (keep turn)</button>
             <button class="secondary" id="nextButton" type="button" hidden>Next challenge</button>
           </div>
 
@@ -928,6 +929,8 @@
 
       document.getElementById("awardButton").hidden = false;
       document.getElementById("awardButton").disabled = false;
+      document.getElementById("skipButton").hidden = false;
+      document.getElementById("skipButton").disabled = false;
       document.getElementById("nextButton").hidden = true;
       document.getElementById("startButton").disabled = false;
       document.getElementById("pauseButton").disabled = false;
@@ -988,6 +991,7 @@
       });
 
       document.getElementById("awardButton").hidden = true;
+      document.getElementById("skipButton").hidden = true;
       document.getElementById("startButton").disabled = true;
       document.getElementById("pauseButton").disabled = true;
       document.getElementById("addTimeButton").disabled = true;
@@ -1006,6 +1010,34 @@
         updateActivePlayer();
         document.getElementById("nextButton").hidden = false;
       }
+    }
+
+    function skipCurrentCard() {
+      if (!currentCard || cardFinished || !players.length) return;
+
+      stopTimer();
+
+      const skippedIndex = cards.findIndex(card => card.id === currentCard.id);
+      if (skippedIndex < 0) return;
+
+      // Keep the skipped card only once, and put it at the bottom of the draw pile.
+      deckOrder = deckOrder.filter(index => index !== skippedIndex);
+
+      // If the skipped card was the last card, start a fresh cycle with it at the bottom.
+      // The next draw will still be a different card.
+      if (deckOrder.length === 0) {
+        deckOrder = cards
+          .map((_, index) => index)
+          .filter(index => index !== skippedIndex);
+        shuffle(deckOrder);
+      }
+
+      deckOrder.unshift(skippedIndex);
+
+      drawCard();
+      renderCard();
+      messageEl.textContent = "Card skipped. The same player keeps their turn.";
+      document.getElementById("challengeCard").scrollIntoView({ block: "start" });
     }
 
     function makeCategoryNote(category, score, opportunities) {
@@ -1144,6 +1176,7 @@
     });
 
     document.getElementById("awardButton").addEventListener("click", awardPoints);
+    document.getElementById("skipButton").addEventListener("click", skipCurrentCard);
 
     document.getElementById("nextButton").addEventListener("click", () => {
       drawCard();
