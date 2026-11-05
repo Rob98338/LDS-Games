@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#16324f">
   <title>Operation: Called to Serve</title>
   <style>
     :root {
@@ -20,28 +21,38 @@
 
     * { box-sizing: border-box; }
 
+    html {
+      min-width: 320px;
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
     body {
+      min-width: 320px;
       margin: 0;
       background: var(--cream);
       color: var(--ink);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       line-height: 1.5;
     }
 
+    button, select, input { font: inherit; }
+
     .app {
-      width: min(760px, calc(100% - 28px));
-      margin: 28px auto;
+      width: min(820px, calc(100% - 32px));
+      margin: clamp(12px, 4vw, 32px) auto;
     }
 
     header {
-      padding: 25px;
+      padding: clamp(20px, 5vw, 30px);
       border-radius: 18px 18px 0 0;
       background: var(--navy);
       color: var(--white);
       text-align: center;
     }
 
-    header .eyebrow {
+    .eyebrow {
       margin: 0 0 6px;
       color: #d9e8f2;
       font-size: .82rem;
@@ -53,85 +64,78 @@
       margin: 0;
       font-size: clamp(1.65rem, 5vw, 2.45rem);
       line-height: 1.15;
+      overflow-wrap: anywhere;
     }
 
-    header .tagline {
+    .tagline {
       margin: 10px 0 0;
       color: #f7e6bf;
     }
 
     main {
-      padding: clamp(18px, 4vw, 30px);
+      padding: clamp(14px, 4vw, 30px);
       border-radius: 0 0 18px 18px;
       background: var(--white);
       box-shadow: 0 12px 34px #16324f18;
     }
 
-    .setup,
-    .player-panel,
-    .card,
-    .timer-panel,
-    .rubric,
-    .summary-player {
+    .panel {
+      padding: clamp(14px, 3vw, 20px);
+      border: 1px solid var(--border);
       border-radius: 14px;
+      background: #fcfdfe;
     }
 
-    .setup {
-      margin-bottom: 20px;
-      padding: 16px;
-      background: #f3f6f8;
-    }
+    .setup-panel { border: 0; background: #f3f6f8; }
 
-    .setup h2,
-    .player-panel h2 {
+    .setup-panel h2,
+    .players-details summary,
+    .summary h2 {
       margin: 0 0 12px;
       color: var(--navy);
-      font-size: 1.1rem;
     }
 
     .setup-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr auto;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
-      align-items: end;
     }
 
     label {
       display: block;
       color: var(--navy);
-      font-size: .92rem;
+      font-size: .95rem;
       font-weight: 700;
     }
 
-    select,
-    input[type="text"] {
+    select, input[type="text"] {
       width: 100%;
+      min-height: 46px;
       margin-top: 6px;
-      padding: 11px 12px;
+      padding: 10px 12px;
       border: 1px solid var(--border);
       border-radius: 10px;
       background: var(--white);
       color: var(--ink);
-      font: inherit;
     }
 
     button {
-      padding: 10px 14px;
+      min-height: 46px;
+      padding: 10px 15px;
       border: 0;
       border-radius: 10px;
-      font: inherit;
       font-weight: 700;
+      line-height: 1.25;
       cursor: pointer;
+      touch-action: manipulation;
       transition: transform .08s ease, filter .15s ease;
     }
 
     button:hover:not(:disabled) { filter: brightness(.96); }
     button:active:not(:disabled) { transform: scale(.98); }
-    button:disabled { opacity: .5; cursor: not-allowed; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
 
-    button:focus-visible,
-    select:focus-visible,
-    input:focus-visible {
+    button:focus-visible, select:focus-visible, input:focus-visible {
       outline: 3px solid var(--gold);
       outline-offset: 2px;
     }
@@ -141,27 +145,23 @@
     .gold { background: var(--gold); color: #34250a; }
     .danger { background: #faecea; color: #96352f; }
 
-    .player-panel {
-      margin-bottom: 20px;
-      padding: 16px;
-      border: 1px solid var(--border);
-      background: #fcfdfe;
-    }
-
-    .player-list {
+    .name-list, .player-list {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
+      margin-top: 16px;
     }
 
     .player-row {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: minmax(0, 1fr) auto;
       gap: 10px;
       align-items: center;
+      min-width: 0;
       padding: 8px 10px;
       border: 1px solid var(--border);
       border-radius: 10px;
+      background: var(--white);
     }
 
     .player-row.active {
@@ -169,52 +169,84 @@
       background: #fffaf0;
     }
 
-    .player-row input {
-      min-width: 0;
-      margin: 0;
-    }
+    .player-row input { min-width: 0; margin: 0; }
+    .player-score { color: var(--navy); font-weight: 800; white-space: nowrap; }
 
-    .player-score {
-      color: var(--navy);
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .topbar {
+    .setup-actions, .actions, .timer-controls {
       display: flex;
       flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .setup-actions, .actions { margin-top: 18px; }
+
+    .setup-actions button,
+    .actions button { flex: 1 1 190px; }
+
+    .play-topbar {
+      display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 16px;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
     .round-info {
       color: var(--navy);
-      font-weight: 750;
+      font-weight: 800;
     }
 
+    .deck-info {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 500;
+    }
+
+    .players-details {
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #f8fafb;
+    }
+
+    .players-details summary {
+      min-height: 46px;
+      margin: 0;
+      padding: 11px 14px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .players-details[open] { padding-bottom: 12px; }
+    .players-details .player-list { margin: 0 12px; }
+
     .card {
-      padding: clamp(18px, 4vw, 26px);
+      min-width: 0;
+      padding: clamp(16px, 4vw, 28px);
       border: 2px solid var(--border);
+      border-radius: 14px;
       background: #fcfdfe;
+      scroll-margin-top: 12px;
     }
 
     .card-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .badge {
       display: inline-block;
-      padding: 5px 10px;
+      max-width: 100%;
+      padding: 6px 11px;
       border-radius: 999px;
       background: #eaf0f4;
       color: var(--navy);
-      font-size: .82rem;
+      font-size: .85rem;
       font-weight: 750;
+      overflow-wrap: anywhere;
     }
 
     .badge.level { background: #fff2d4; }
@@ -222,14 +254,21 @@
     .card-title {
       margin: 0 0 10px;
       color: var(--navy);
-      font-size: clamp(1.25rem, 4vw, 1.65rem);
+      font-size: clamp(1.3rem, 4vw, 1.7rem);
+      line-height: 1.2;
+      overflow-wrap: anywhere;
     }
 
-    .prompt { margin: 0; font-size: 1.1rem; }
+    .prompt {
+      margin: 0;
+      font-size: clamp(1rem, 2.5vw, 1.12rem);
+      overflow-wrap: anywhere;
+    }
 
     .timer-panel {
       margin: 18px 0;
-      padding: 15px;
+      padding: clamp(14px, 3vw, 20px);
+      border-radius: 14px;
       background: #f3f6f8;
       text-align: center;
     }
@@ -238,27 +277,30 @@
       margin: 0 0 10px;
       color: var(--navy);
       font-weight: 800;
+      overflow-wrap: anywhere;
     }
 
     .timer {
-      margin-bottom: 11px;
+      margin-bottom: 13px;
       color: var(--navy);
-      font-size: 2.5rem;
+      font-size: clamp(2.4rem, 9vw, 3rem);
       font-variant-numeric: tabular-nums;
       font-weight: 800;
       line-height: 1.1;
     }
 
     .timer.done { color: #96352f; }
+    .timer-controls { justify-content: center; }
 
     .rubric {
       margin: 18px 0;
-      padding: 15px;
+      padding: clamp(14px, 3vw, 18px);
+      border-radius: 14px;
       background: var(--cream);
     }
 
     .rubric h3 {
-      margin: 0 0 8px;
+      margin: 0 0 10px;
       color: var(--navy);
       font-size: 1rem;
     }
@@ -266,52 +308,51 @@
     .rubric label {
       display: flex;
       align-items: flex-start;
-      gap: 9px;
-      margin: 9px 0;
+      gap: 11px;
+      min-height: 44px;
+      margin: 4px 0;
+      padding: 8px 4px;
+      border-radius: 8px;
       color: var(--ink);
       font-weight: 500;
+      line-height: 1.4;
+      cursor: pointer;
     }
+
+    .rubric label:hover { background: #ffffffa8; }
 
     .rubric input {
       flex: 0 0 auto;
-      margin-top: 4px;
+      width: 21px;
+      height: 21px;
+      margin: 1px 0 0;
       accent-color: var(--green);
-      transform: scale(1.1);
+      cursor: pointer;
     }
-
-    .actions,
-    .timer-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-    }
-
-    .actions { margin-top: 18px; }
 
     .message {
       min-height: 1.5em;
       margin: 12px 0 0;
       color: var(--green);
       font-weight: 700;
+      overflow-wrap: anywhere;
     }
 
     .round-note {
       margin: 14px 0 0;
       color: var(--muted);
-      font-size: .9rem;
+      font-size: .92rem;
     }
 
     .summary {
-      padding: clamp(18px, 4vw, 26px);
+      padding: clamp(16px, 4vw, 28px);
       border: 2px solid #dbe9df;
       border-radius: 14px;
       background: #f7fbf7;
+      scroll-margin-top: 12px;
     }
 
-    .summary h2 {
-      margin: 0 0 8px;
-      color: var(--navy);
-    }
+    .summary h2 { margin-bottom: 8px; }
 
     .summary-intro {
       margin: 0 0 18px;
@@ -319,15 +360,18 @@
     }
 
     .summary-player {
+      min-width: 0;
       margin: 14px 0;
-      padding: 15px;
+      padding: clamp(12px, 3vw, 18px);
       border: 1px solid var(--border);
+      border-radius: 14px;
       background: var(--white);
     }
 
     .summary-player h3 {
       margin: 0 0 10px;
       color: var(--navy);
+      overflow-wrap: anywhere;
     }
 
     .summary-total {
@@ -342,21 +386,18 @@
       font-size: .93rem;
     }
 
-    .score-table th,
-    .score-table td {
-      padding: 9px 7px;
+    .score-table th, .score-table td {
+      padding: 10px 8px;
       border-top: 1px solid var(--border);
       text-align: left;
       vertical-align: top;
+      overflow-wrap: anywhere;
     }
 
-    .score-table th {
-      width: 43%;
-      color: var(--navy);
-    }
+    .score-table th { width: 34%; color: var(--navy); }
 
     .score-table td.points {
-      width: 12%;
+      width: 14%;
       font-weight: 800;
       text-align: center;
       white-space: nowrap;
@@ -366,10 +407,22 @@
 
     .summary-encouragement {
       margin: 12px 0 0;
-      padding: 11px 12px;
+      padding: 12px;
       border-radius: 10px;
       background: #f3f6f8;
       color: var(--ink);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     footer {
@@ -381,13 +434,81 @@
 
     [hidden] { display: none !important; }
 
-    @media (max-width: 560px) {
+    @media (max-width: 600px) {
+      .app { width: 100%; margin: 0 auto; }
+      header { border-radius: 0; }
+
+      main {
+        padding: 12px;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .name-list, .player-list { grid-template-columns: 1fr; }
       .setup-grid { grid-template-columns: 1fr; }
-      .player-list { grid-template-columns: 1fr; }
-      .topbar { align-items: flex-start; }
-      .actions button { flex: 1 1 auto; }
-      .score-table th { width: 42%; }
-      .score-table td.note { font-size: .86rem; }
+
+      .setup-actions button,
+      .actions button { flex-basis: 100%; width: 100%; }
+
+      .play-topbar { align-items: stretch; }
+      .card { padding: 16px 14px; }
+
+      .timer-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .timer-controls button:first-child { grid-column: 1 / -1; }
+      .timer-controls button { width: 100%; }
+      .rubric { padding: 13px 11px; }
+      .rubric label { gap: 10px; padding: 9px 4px; }
+
+      .score-table, .score-table tbody {
+        display: block;
+        width: 100%;
+      }
+
+      .score-table tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 4px 10px;
+        padding: 10px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .score-table th, .score-table td {
+        width: auto;
+        padding: 0;
+        border: 0;
+      }
+
+      .score-table th {
+        grid-column: 1;
+        align-self: center;
+      }
+
+      .score-table td.points {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: right;
+      }
+
+      .score-table td.note {
+        grid-column: 1 / -1;
+        padding-top: 3px;
+        font-size: .88rem;
+      }
+    }
+
+    @media (max-width: 360px) {
+      body, button, select, input { font-size: 15px; }
+      main { padding: 10px; }
+      .card { padding: 14px 11px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; }
     }
   </style>
 </head>
@@ -400,8 +521,9 @@
     </header>
 
     <main>
-      <section class="setup" aria-labelledby="setupHeading">
-        <h2 id="setupHeading">Game setup</h2>
+      <section class="panel setup-panel" id="setupScreen" aria-labelledby="setupHeading">
+        <h2 id="setupHeading">Set up your game</h2>
+
         <div class="setup-grid">
           <label for="playerCount">
             Number of players
@@ -430,61 +552,70 @@
               <option value="10">10 cards</option>
             </select>
           </label>
+        </div>
 
-          <button class="primary" id="setupButton" type="button">Set up game</button>
+        <div class="name-list" id="nameList"></div>
+
+        <div class="setup-actions">
+          <button class="primary" id="beginButton" type="button">Start game</button>
         </div>
       </section>
 
-      <section class="player-panel" aria-labelledby="playersHeading">
-        <h2 id="playersHeading">Players and game scores</h2>
-        <div class="player-list" id="playerList"></div>
-      </section>
-
-      <div class="topbar">
-        <div class="round-info" id="roundInfo" aria-live="polite"></div>
-        <button class="danger" id="resetButton" type="button">Reset game</button>
-      </div>
-
-      <section class="card" id="challengeView" aria-live="polite">
-        <div class="card-meta">
-          <span class="badge level" id="levelBadge"></span>
-          <span class="badge" id="categoryBadge"></span>
-          <span class="badge"><span id="secondsLabel"></span> seconds</span>
-        </div>
-
-        <h2 class="card-title" id="cardTitle"></h2>
-        <p class="prompt" id="promptText"></p>
-
-        <div class="timer-panel">
-          <p class="active-player" id="activePlayer"></p>
-          <div class="timer" id="timer" role="timer" aria-live="off">00:00</div>
-          <div class="timer-controls">
-            <button class="primary" id="startButton" type="button">Start timer</button>
-            <button class="secondary" id="pauseButton" type="button">Pause</button>
-            <button class="secondary" id="addTimeButton" type="button">+15 seconds</button>
+      <section id="playScreen" hidden>
+        <div class="play-topbar">
+          <div>
+            <div class="round-info" id="roundInfo" aria-live="polite"></div>
+            <p class="deck-info" id="deckInfo" aria-live="polite"></p>
           </div>
+          <button class="danger" id="resetButton" type="button">New game</button>
         </div>
 
-        <div class="rubric">
-          <h3>Score this challenge — 1 point for each principle demonstrated</h3>
-          <label><input type="checkbox" class="point" data-category="care"> Love and charity — treat people with genuine care.</label>
-          <label><input type="checkbox" class="point" data-category="respect"> Respect — honor others’ beliefs, choices, boundaries, and dignity.</label>
-          <label><input type="checkbox" class="point" data-category="empathy"> Listen with empathy — seek to understand before responding.</label>
-          <label><input type="checkbox" class="point" data-category="humility"> Humility and honesty — don’t pretend to know everything; be willing to learn.</label>
-          <label><input type="checkbox" class="point" data-category="patience"> Patience and kindness — respond calmly, especially when conversations are difficult.</label>
-          <label><input type="checkbox" class="point" data-category="invitation"> Gentle, pressure-free invitations — let people make their own choices.</label>
-        </div>
+        <details class="players-details">
+          <summary>Players and scores</summary>
+          <div class="player-list" id="playerList"></div>
+        </details>
 
-        <div class="actions">
-          <button class="gold" id="awardButton" type="button">Award points &amp; finish card</button>
-          <button class="secondary" id="nextButton" type="button" hidden>Next challenge</button>
-        </div>
+        <section class="card" id="challengeCard" aria-live="polite">
+          <div class="card-meta">
+            <span class="badge level" id="levelBadge"></span>
+            <span class="badge" id="categoryBadge"></span>
+            <span class="badge"><span id="secondsLabel"></span> seconds</span>
+          </div>
 
-        <p class="message" id="message" aria-live="polite"></p>
-        <p class="round-note">
-          Players take turns in order. The active player earns the points for the card.
-          Each card can earn up to 6 points.
-        </p>
+          <h2 class="card-title" id="cardTitle"></h2>
+          <p class="prompt" id="promptText"></p>
+
+          <div class="timer-panel">
+            <p class="active-player" id="activePlayer"></p>
+            <div class="timer" id="timer" role="timer" aria-live="off">00:00</div>
+            <div class="timer-controls">
+              <button class="primary" id="startButton" type="button">Start timer</button>
+              <button class="secondary" id="pauseButton" type="button">Pause</button>
+              <button class="secondary" id="addTimeButton" type="button">+15 seconds</button>
+            </div>
+          </div>
+
+          <div class="rubric">
+            <h3>Score this challenge — 1 point for each principle demonstrated</h3>
+            <label><input type="checkbox" class="point" data-category="care"> Love and charity — treat people with genuine care.</label>
+            <label><input type="checkbox" class="point" data-category="respect"> Respect — honor others’ beliefs, choices, boundaries, and dignity.</label>
+            <label><input type="checkbox" class="point" data-category="empathy"> Listen with empathy — seek to understand before responding.</label>
+            <label><input type="checkbox" class="point" data-category="humility"> Humility and honesty — don’t pretend to know everything; be willing to learn.</label>
+            <label><input type="checkbox" class="point" data-category="patience"> Patience and kindness — respond calmly, especially when conversations are difficult.</label>
+            <label><input type="checkbox" class="point" data-category="invitation"> Gentle, pressure-free invitations — let people make their own choices.</label>
+          </div>
+
+          <div class="actions">
+            <button class="gold" id="awardButton" type="button">Award points &amp; finish card</button>
+            <button class="secondary" id="nextButton" type="button" hidden>Next challenge</button>
+          </div>
+
+          <p class="message" id="message" aria-live="polite"></p>
+          <p class="round-note">
+            Players take turns in order. The active player earns the points for the card.
+            Each card can earn up to 6 points.
+          </p>
+        </section>
       </section>
 
       <section class="summary" id="roundSummary" aria-live="polite" hidden>
@@ -493,6 +624,7 @@
         <div id="summaryPlayers"></div>
         <div class="actions">
           <button class="primary" id="nextRoundButton" type="button">Start next round</button>
+          <button class="secondary" id="newGameFromSummary" type="button">Set up a new game</button>
         </div>
       </section>
 
@@ -512,37 +644,59 @@
       { id: "invitation", name: "Gentle, pressure-free invitations", action: "inviting gently and leaving people free to choose" }
     ];
 
-    const cards = [
-      { level: 1, category: "Listening", seconds: 30, title: "The 30-Second Message", prompt: "Share one simple thought about hope or faith in a way that feels natural and easy to understand." },
-      { level: 1, category: "Listening", seconds: 45, title: "Listen First", prompt: "Someone says, “I’ve had a rough week.” What could you say or ask before sharing advice or a message?" },
-      { level: 1, category: "Service", seconds: 30, title: "A Small Act of Service", prompt: "Think of one practical, considerate way to help someone in your neighborhood or community—without assuming what they need." },
-      { level: 1, category: "Invitations", seconds: 30, title: "A Friendly Invitation", prompt: "Invite someone to a church or community activity in a way that feels easy to accept, decline, or ask questions about." },
-      { level: 1, category: "Sharing", seconds: 45, title: "Make It Simple", prompt: "Explain a belief or principle in plain language, then ask whether the person would like to hear more." },
-      { level: 1, category: "Questions", seconds: 45, title: "A Question for You", prompt: "Ask two friendly, open-ended questions that show genuine interest in another person." },
-      { level: 1, category: "Service", seconds: 45, title: "Ask Before Helping", prompt: "Someone seems to need help. Show how you would offer assistance while respecting their answer." },
-      { level: 1, category: "Sharing", seconds: 30, title: "A Thought on Gratitude", prompt: "Share a simple thought about gratitude without pretending that everything is easy." },
-      { level: 1, category: "Listening", seconds: 45, title: "Check Your Understanding", prompt: "Summarize someone's concern in your own words, then ask if you understood them correctly." },
-      { level: 1, category: "Invitations", seconds: 45, title: "No Pressure", prompt: "Invite someone to an activity and make it clear that it's okay if they decline." },
-      { level: 2, category: "Questions", seconds: 45, title: "The Unexpected Question", prompt: "Someone asks a sincere question you don’t know how to answer. Respond honestly, respectfully, and without guessing." },
-      { level: 2, category: "Respect", seconds: 30, title: "Not Interested", prompt: "Someone politely says they’re not interested in talking. What do you say or do next?" },
-      { level: 2, category: "Plan B", seconds: 45, title: "The Appointment Cancels", prompt: "An appointment cancels at the last minute. As a team, come up with a helpful backup plan." },
-      { level: 2, category: "Listening", seconds: 60, title: "Different Backgrounds", prompt: "The person you’re speaking with has beliefs or experiences very different from yours. Name two ways to keep the conversation respectful and curious." },
-      { level: 2, category: "Companionship", seconds: 45, title: "A Tough Day", prompt: "Your companion seems discouraged after a difficult day. What’s one supportive thing you could say and one practical thing you could do together?" },
-      { level: 2, category: "Questions", seconds: 60, title: "I Don’t Know Yet", prompt: "A person asks about a teaching you’re unsure of. Show how you would say so and look for reliable information." },
-      { level: 2, category: "Invitations", seconds: 45, title: "Let Them Choose", prompt: "Invite someone to a discussion, but let them choose what they would like to talk about." },
-      { level: 2, category: "Empathy", seconds: 60, title: "A Difficult Experience", prompt: "Someone shares a painful experience. Respond in a way that acknowledges their feelings without trying to explain them away." },
-      { level: 2, category: "Plan B", seconds: 45, title: "The Schedule Changes", prompt: "Your plans change unexpectedly. Suggest a useful, safe alternative that works for everyone." },
-      { level: 2, category: "Respect", seconds: 45, title: "A Different Opinion", prompt: "Someone disagrees with you. Respond by showing that you understand at least one part of their perspective." },
-      { level: 3, category: "Companionship", seconds: 60, title: "The Companion Disagreement", prompt: "You and your companion disagree about how to spend an unexpected free hour. Work out a plan that lets both people feel heard." },
-      { level: 3, category: "Listening", seconds: 60, title: "The Conversation Changes", prompt: "You planned to discuss one topic, but the person brings up something important to them. Decide how to respond without rushing back to your plan." },
-      { level: 3, category: "Empathy", seconds: 60, title: "A Difficult Past Experience", prompt: "Someone says a past religious experience left them hurt or wary. Practice a response that acknowledges their feelings without arguing them away." },
-      { level: 3, category: "Teamwork", seconds: 90, title: "Two Needs, One Plan", prompt: "One teammate is tired; the other is worried about an unfinished task. Agree on a kind, realistic next step that considers both concerns." },
-      { level: 3, category: "Listening", seconds: 45, title: "Pause, Reflect, Respond", prompt: "Listen to another player describe a concern. Before answering, summarize what you heard and ask whether you understood correctly." },
-      { level: 3, category: "Plan B", seconds: 60, title: "Plan B Plus", prompt: "An appointment cancels, it starts raining, and your planned activity is no longer possible. Create a safe, useful backup plan together." },
-      { level: 3, category: "Perspective", seconds: 60, title: "Switch Perspectives", prompt: "Describe the situation from the other person’s point of view, then come up with a response that shows understanding." },
-      { level: 3, category: "Teamwork", seconds: 60, title: "The Team Debrief", prompt: "After a challenging interaction, name one thing the team handled well and one thing to learn from—without blaming anyone." },
-      { level: 3, category: "Questions", seconds: 60, title: "Find a Reliable Answer", prompt: "A question needs research. Explain how your team would look for a trustworthy answer instead of guessing." },
-      { level: 3, category: "Boundaries", seconds: 60, title: "Respect the Boundary", prompt: "Someone sets a clear personal boundary. Decide how to respect it and continue, if appropriate, without pressure." }
+    // 10 settings × 10 situations × 5 challenge types = 500 distinct cards.
+    const settings = [
+      "at a neighborhood gathering",
+      "during a visit with a friend",
+      "while helping with a community project",
+      "at a youth or family activity",
+      "during a quiet conversation after a meeting",
+      "while making plans with a companion",
+      "at a service opportunity",
+      "during a conversation with a new acquaintance",
+      "while checking in with someone by message",
+      "at a shared meal with people from different backgrounds"
+    ];
+
+    const situations = [
+      "someone shares that they feel left out",
+      "a person asks what gives you hope",
+      "someone explains that they see the issue differently",
+      "a friend mentions they are having a difficult week",
+      "a person says they are not ready to join an activity",
+      "someone asks a question you cannot answer yet",
+      "a group has several different ideas about what to do",
+      "a person shares a goal that matters deeply to them",
+      "someone seems unsure whether they want help",
+      "a conversation turns to a topic that is personal for someone"
+    ];
+
+    const challenges = [
+      {
+        title: "Listen and reflect",
+        seconds: 45,
+        instruction: "Practice listening without interrupting. Reflect back what you heard, then ask whether you understood correctly."
+      },
+      {
+        title: "Offer thoughtful support",
+        seconds: 45,
+        instruction: "Respond with kindness. Ask what would be helpful instead of assuming, and respect the answer."
+      },
+      {
+        title: "Make room for choice",
+        seconds: 45,
+        instruction: "Show respect for the person's agency. Offer a clear, pressure-free option and make it comfortable to decline."
+      },
+      {
+        title: "Share honestly",
+        seconds: 45,
+        instruction: "Respond in your own words with honesty and humility. Share only what you know, and say when you are unsure."
+      },
+      {
+        title: "Plan a small act of service",
+        seconds: 60,
+        instruction: "Work out one practical, considerate next step. Check that it is welcome, useful, and respectful of the person's needs."
+      }
     ];
 
     const levelNames = {
@@ -550,6 +704,35 @@
       2: "Curveball",
       3: "Team Mission"
     };
+
+    function buildDeck() {
+      const deck = [];
+      let id = 0;
+
+      settings.forEach((setting, settingIndex) => {
+        situations.forEach((situation, situationIndex) => {
+          challenges.forEach((challenge, challengeIndex) => {
+            id += 1;
+            const level = 1 + ((settingIndex + situationIndex + challengeIndex) % 3);
+
+            deck.push({
+              id,
+              level,
+              category: ["Listening", "Service", "Respect", "Sharing", "Teamwork"][
+                (settingIndex + situationIndex + challengeIndex) % 5
+              ],
+              seconds: challenge.seconds,
+              title: `${challenge.title}: ${situation}`,
+              prompt: `${setting.charAt(0).toUpperCase()}${setting.slice(1)}, ${situation}. ${challenge.instruction}`
+            });
+          });
+        });
+      });
+
+      return deck;
+    }
+
+    const cards = buildDeck();
 
     let players = [];
     let currentCard = null;
@@ -560,11 +743,13 @@
     let cardsPerRound = 3;
     let activePlayerIndex = 0;
     let cardFinished = false;
-    let previousCardIndex = -1;
+    let deckOrder = [];
+    let previousCardId = null;
 
     const timerEl = document.getElementById("timer");
     const messageEl = document.getElementById("message");
-    const challengeView = document.getElementById("challengeView");
+    const setupScreen = document.getElementById("setupScreen");
+    const playScreen = document.getElementById("playScreen");
     const roundSummary = document.getElementById("roundSummary");
 
     function makeCategoryTotals() {
@@ -579,6 +764,41 @@
         roundCategories: makeCategoryTotals(),
         cardsThisRound: 0
       };
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function refillDeck() {
+      deckOrder = cards.map((_, index) => index);
+
+      // When starting a new cycle, keep the previous card out of the first draw.
+      if (previousCardId !== null && deckOrder.length > 1) {
+        const previousIndex = cards.findIndex(card => card.id === previousCardId);
+        if (previousIndex >= 0) {
+          deckOrder = deckOrder.filter(index => index !== previousIndex);
+          const remainingIndex = deckOrder[Math.floor(Math.random() * deckOrder.length)];
+          deckOrder.push(previousIndex);
+          deckOrder.splice(deckOrder.indexOf(remainingIndex), 1);
+          deckOrder.unshift(remainingIndex);
+        }
+      }
+
+      shuffle(deckOrder);
+    }
+
+    function drawCard() {
+      if (deckOrder.length === 0) refillDeck();
+
+      const index = deckOrder.pop();
+      currentCard = cards[index];
+      previousCardId = currentCard.id;
+      return currentCard;
     }
 
     function stopTimer() {
@@ -609,17 +829,32 @@
       }, 1000);
     }
 
-    function drawRandomCard() {
-      let index = Math.floor(Math.random() * cards.length);
+    function updateDeckInfo() {
+      const left = deckOrder.length;
+      document.getElementById("deckInfo").textContent =
+        `${cards.length} cards in deck · ${left} unplayed before reshuffle`;
+    }
 
-      if (cards.length > 1) {
-        while (index === previousCardIndex) {
-          index = Math.floor(Math.random() * cards.length);
-        }
+    function renderNameInputs() {
+      const count = Number(document.getElementById("playerCount").value);
+      const list = document.getElementById("nameList");
+      const oldNames = [...list.querySelectorAll("input")].map(input => input.value);
+      list.replaceChildren();
+
+      for (let index = 0; index < count; index += 1) {
+        const label = document.createElement("label");
+        label.textContent = `Player ${index + 1} name`;
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.maxLength = 24;
+        input.placeholder = `Player ${index + 1}`;
+        input.value = oldNames[index] || "";
+        input.autocomplete = "off";
+
+        label.append(input);
+        list.append(label);
       }
-
-      previousCardIndex = index;
-      return cards[index];
     }
 
     function renderPlayers() {
@@ -656,8 +891,7 @@
       const activePlayer = players[activePlayerIndex];
       const name = activePlayer?.name.trim() || `Player ${activePlayerIndex + 1}`;
 
-      document.getElementById("activePlayer").textContent =
-        `Up now: ${name}`;
+      document.getElementById("activePlayer").textContent = `Up now: ${name}`;
 
       document.querySelectorAll(".player-row").forEach((row, index) => {
         row.classList.toggle("active", index === activePlayerIndex);
@@ -684,6 +918,7 @@
       updateTimer();
       updateRoundInfo();
       updateActivePlayer();
+      updateDeckInfo();
       messageEl.textContent = "";
 
       document.querySelectorAll(".point").forEach(box => {
@@ -699,29 +934,33 @@
       document.getElementById("addTimeButton").disabled = false;
     }
 
-    function beginGame(resetScores) {
+    function beginGame() {
       stopTimer();
 
       const count = Number(document.getElementById("playerCount").value);
       cardsPerRound = Number(document.getElementById("cardsPerRound").value);
 
-      const oldNames = resetScores ? [] : players.map(player => player.name);
+      const names = [...document.querySelectorAll("#nameList input")]
+        .map(input => input.value.trim());
 
       players = Array.from({ length: count }, (_, index) =>
-        makePlayer(oldNames[index], index)
+        makePlayer(names[index], index)
       );
 
       round = 1;
       cardsCompleted = 0;
       activePlayerIndex = 0;
-      previousCardIndex = -1;
+      previousCardId = null;
+      refillDeck();
 
-      document.getElementById("roundSummary").hidden = true;
-      challengeView.hidden = false;
+      setupScreen.hidden = true;
+      roundSummary.hidden = true;
+      playScreen.hidden = false;
 
       renderPlayers();
-      currentCard = drawRandomCard();
+      drawCard();
       renderCard();
+      document.getElementById("challengeCard").scrollIntoView({ block: "start" });
     }
 
     function awardPoints() {
@@ -738,8 +977,7 @@
       player.cardsThisRound += 1;
 
       checkedBoxes.forEach(box => {
-        const categoryId = box.dataset.category;
-        player.roundCategories[categoryId] += 1;
+        player.roundCategories[box.dataset.category] += 1;
       });
 
       cardsCompleted += 1;
@@ -762,7 +1000,6 @@
         : `${playerName} earned ${earned} ${earned === 1 ? "point" : "points"} for showing these principles.`;
 
       if (cardsCompleted >= cardsPerRound) {
-        document.getElementById("nextButton").hidden = true;
         showRoundSummary();
       } else {
         activePlayerIndex = (activePlayerIndex + 1) % players.length;
@@ -773,7 +1010,7 @@
 
     function makeCategoryNote(category, score, opportunities) {
       if (opportunities === 0) {
-        return "No card this round gave you a turn to earn this point—there’ll be another chance next round.";
+        return "No turn this round gave you a chance to earn this point. There will be another chance next round.";
       }
 
       const proportion = score / opportunities;
@@ -786,21 +1023,17 @@
         return `Wonderful work ${category.action}—that strength really showed this round!`;
       }
 
-      if (score === opportunities) {
-        return `You showed ${category.action} on every turn this round—fantastic consistency!`;
-      }
-
       return `Nice start ${category.action}. Keep looking for small chances to build this strength next round.`;
     }
 
     function showRoundSummary() {
       stopTimer();
-      challengeView.hidden = true;
+      playScreen.hidden = true;
       roundSummary.hidden = false;
 
       document.getElementById("summaryHeading").textContent = `Round ${round} summary`;
       document.getElementById("summaryIntro").textContent =
-        `Here’s how everyone practiced the six principles this round. Celebrate what went well, and treat each next step as a chance to grow.`;
+        "Celebrate what went well, and treat each next step as a chance to grow.";
 
       const container = document.getElementById("summaryPlayers");
       container.replaceChildren();
@@ -814,8 +1047,7 @@
 
         const total = document.createElement("p");
         total.className = "summary-total";
-        total.textContent =
-          `Round points: ${player.roundTotal} · Game total: ${player.total}`;
+        total.textContent = `Round points: ${player.roundTotal} · Game total: ${player.total}`;
 
         const table = document.createElement("table");
         table.className = "score-table";
@@ -840,11 +1072,7 @@
 
           const noteCell = document.createElement("td");
           noteCell.className = "note";
-          noteCell.textContent = makeCategoryNote(
-            category,
-            score,
-            player.cardsThisRound
-          );
+          noteCell.textContent = makeCategoryNote(category, score, player.cardsThisRound);
 
           row.append(nameCell, pointsCell, noteCell);
           body.append(row);
@@ -861,6 +1089,8 @@
         card.append(heading, total, table, encouragement);
         container.append(card);
       });
+
+      roundSummary.scrollIntoView({ block: "start" });
     }
 
     function startNextRound() {
@@ -876,27 +1106,33 @@
       });
 
       activePlayerIndex = 0;
-      currentCard = drawRandomCard();
-
       roundSummary.hidden = true;
-      challengeView.hidden = false;
+      playScreen.hidden = false;
 
       renderPlayers();
+      drawCard();
       renderCard();
+      document.getElementById("challengeCard").scrollIntoView({ block: "start" });
     }
 
-    function resetGame() {
-      const confirmed = window.confirm(
-        "Reset the game and clear all player scores?"
-      );
-
-      if (!confirmed) return;
-
-      beginGame(true);
+    function showSetup() {
+      stopTimer();
+      playScreen.hidden = true;
+      roundSummary.hidden = true;
+      setupScreen.hidden = false;
+      renderNameInputs();
+      setupScreen.scrollIntoView({ block: "start" });
     }
 
-    document.getElementById("setupButton").addEventListener("click", () => beginGame(false));
-    document.getElementById("resetButton").addEventListener("click", resetGame);
+    function confirmNewGame() {
+      const confirmed = window.confirm("Start a new game and clear all scores?");
+      if (confirmed) showSetup();
+    }
+
+    document.getElementById("playerCount").addEventListener("change", renderNameInputs);
+    document.getElementById("beginButton").addEventListener("click", beginGame);
+    document.getElementById("resetButton").addEventListener("click", confirmNewGame);
+    document.getElementById("newGameFromSummary").addEventListener("click", showSetup);
     document.getElementById("startButton").addEventListener("click", startTimer);
     document.getElementById("pauseButton").addEventListener("click", stopTimer);
 
@@ -910,13 +1146,14 @@
     document.getElementById("awardButton").addEventListener("click", awardPoints);
 
     document.getElementById("nextButton").addEventListener("click", () => {
-      currentCard = drawRandomCard();
+      drawCard();
       renderCard();
+      document.getElementById("challengeCard").scrollIntoView({ block: "start" });
     });
 
     document.getElementById("nextRoundButton").addEventListener("click", startNextRound);
 
-    beginGame(true);
+    renderNameInputs();
   </script>
 </body>
 </html>
