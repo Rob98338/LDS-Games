@@ -15,18 +15,13 @@ body {
   margin:0; padding:18px 14px 28px; background:#f4f8fa; color:var(--ink);
   font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
-body.timer-warning {
-  animation: urgent-screen-flash .6s steps(1, end) infinite;
-}
+body.timer-warning { animation:urgent-screen-flash .6s steps(1,end) infinite; }
 @keyframes urgent-screen-flash {
-  0%, 49% { background-color:#fff; }
-  50%, 100% { background-color:#ffdddd; }
+  0%,49% { background-color:#fff; }
+  50%,100% { background-color:#ffdddd; }
 }
-@media (prefers-reduced-motion: reduce) {
-  body.timer-warning {
-    background-color:#ffe1e1;
-    animation:none;
-  }
+@media (prefers-reduced-motion:reduce) {
+  body.timer-warning { background-color:#ffe1e1; animation:none; }
 }
 .shell { width:min(1000px,100%); margin:0 auto; }
 header { text-align:center; margin:4px auto 16px; }
@@ -86,20 +81,18 @@ button.secondary { background:#e6eef2; color:var(--navy); }
 .timer-pill.urgent { background:#ffe3df; color:#9a2d20; animation:pulse 1s infinite; }
 @keyframes pulse { 50% { opacity:.65; } }
 .question {
-  margin:6px 0 12px; color:var(--navy);
-  font-size:1.6rem; line-height:1.3; font-weight:800;
+  margin:6px 0 12px; color:var(--navy); font-size:1.6rem;
+  line-height:1.3; font-weight:800;
 }
 .answer {
-  display:flex; align-items:flex-start; gap:12px;
-  width:100%; margin:8px 0; padding:14px 16px; border:1px solid var(--line);
-  border-radius:9px; background:#f5f8fa; color:var(--ink); text-align:left;
-  font:inherit; font-size:1.25rem; line-height:1.4; font-weight:600;
+  display:flex; align-items:flex-start; gap:12px; width:100%; margin:8px 0;
+  padding:14px 16px; border:1px solid var(--line); border-radius:9px;
+  background:#f5f8fa; color:var(--ink); text-align:left; font:inherit;
+  font-size:1.25rem; line-height:1.4; font-weight:600;
 }
 .answer:hover { background:#eaf2f6; }
 .answer:disabled { cursor:default; opacity:1; }
-.answer-number {
-  flex:0 0 1.8em; color:var(--blue); font-weight:800;
-}
+.answer-number { flex:0 0 1.8em; color:var(--blue); font-weight:800; }
 .answer.is-lie { border-color:#d85343; background:var(--red); }
 .answer.is-true { border-color:#4a9660; background:var(--green); }
 .feedback { margin:10px 0; padding:12px; border-radius:11px; }
@@ -123,7 +116,7 @@ a { color:#135d83; font-weight:650; }
   <header>
     <span class="badge">A source-backed quiz game</span>
     <h1>Three Truths<br>&amp; a Lie</h1>
-    <p class="subtitle">Quorum Challenge · 250 questions per deck</p>
+    <p class="subtitle">Quorum Challenge · 250 question cards per deck</p>
   </header>
 
   <main>
@@ -150,8 +143,12 @@ a { color:#135d83; font-weight:650; }
           <label class="deck-option"><input type="checkbox" name="deck" value="teachers" checked><span>Teachers Quorum</span></label>
           <label class="deck-option"><input type="checkbox" name="deck" value="priests" checked><span>Priests Quorum</span></label>
           <label class="deck-option"><input type="checkbox" name="deck" value="elders" checked><span>Elders Quorum</span></label>
+          <label class="deck-option"><input type="checkbox" name="deck" value="highPriests" checked><span>High Priests</span></label>
+          <label class="deck-option"><input type="checkbox" name="deck" value="patriarch" checked><span>Patriarch</span></label>
+          <label class="deck-option"><input type="checkbox" name="deck" value="seventies" checked><span>Seventy</span></label>
+          <label class="deck-option"><input type="checkbox" name="deck" value="apostles" checked><span>Apostles</span></label>
         </div>
-        <p class="selection-status" id="deckSelectionStatus" aria-live="polite">4 decks selected</p>
+        <p class="selection-status" id="deckSelectionStatus" aria-live="polite">8 decks selected</p>
       </fieldset>
 
       <div class="row">
@@ -187,8 +184,8 @@ a { color:#135d83; font-weight:650; }
 
       <div id="nameFields" class="row hidden" style="margin-top:12px"></div>
       <p class="muted notice">
-        Each deck contains 250 question cards made from different combinations of handbook-based statements.
-        The combinations reuse a curated set of facts; they are not 250 separate researched facts per deck.
+        Each deck contains 250 question cards generated from combinations of a curated set of source-backed statements.
+        Facts are reused across cards; there are not 250 separate researched facts per deck.
       </p>
       <button type="button" id="startButton">Start game</button>
     </section>
@@ -215,7 +212,7 @@ a { color:#135d83; font-weight:650; }
     </section>
   </main>
 
-  <p class="footer">After each answer, the game shows an explanation and a link to the related handbook section. Source links require internet access.</p>
+  <p class="footer">After each answer, the game shows an explanation and a link to the related official Church source. Source links require internet access.</p>
 </div>
 
 <script>
@@ -272,17 +269,92 @@ const sources = {
       assignments: "The elders quorum president seeks the bishop’s approval for ministering assignments.",
       coordinate: "The elders quorum president coordinates ministering assignments with the Relief Society presidency."
     }
+  },
+  highPriest: {
+    title: "General Handbook, 6.2.1.1 — Melchizedek Priesthood",
+    url: "https://www.churchofjesuschrist.org/study/manual/general-handbook/6-stake-leadership?lang=eng",
+    evidence: {
+      presides: "The stake presidency presides over all who hold the Melchizedek Priesthood in the stake.",
+      president: "The stake president is the president of the stake high priests quorum.",
+      presidency: "The stake president and his counselors are the presidency of that quorum.",
+      bishops: "The quorum consists of the stake president and other high priests, including bishops and their counselors.",
+      councilors: "High councilors are included in the stake high priests quorum.",
+      patriarchs: "Functioning patriarchs are included in the stake high priests quorum.",
+      eldersMeetings: "Members attend elders quorum meetings in their ward if they are not assigned elsewhere.",
+      ordinations: "The stake president oversees the conferral of the Melchizedek Priesthood and ordinations to the offices of elder and high priest.",
+      district: "High priests quorums are organized only in stakes, not districts."
+    }
+  },
+  patriarch: {
+    title: "General Handbook, 6.6 — Stake Patriarch",
+    url: "https://www.churchofjesuschrist.org/study/manual/general-handbook/6-stake-leadership?lang=eng",
+    evidence: {
+      office: "Patriarch is an office in the Melchizedek Priesthood.",
+      blessings: "Patriarchs are called and ordained to give patriarchal blessings to worthy members of the Church.",
+      worthy: "A patriarch must be a worthy Melchizedek Priesthood holder.",
+      mature: "A patriarch should be mature in his understanding of the gospel and sensitive to the Spirit.",
+      ownBlessing: "A patriarch should have received his own patriarchal blessing.",
+      age: "Normally, a patriarch should be age 55 or older.",
+      married: "A man must be married when he is called as a patriarch.",
+      twelve: "The Quorum of the Twelve Apostles directs the calling of stake patriarchs.",
+      recommend: "The stake president may recommend whom to call as a stake patriarch.",
+      approval: "If the Quorum of the Twelve Apostles approves the recommendation, the stake president may be authorized to interview and call the patriarch.",
+      ordination: "When authorized, the stake president ordains the patriarch and does not delegate this responsibility to a counselor.",
+      quorum: "An actively serving patriarch is a member of the stake high priests quorum.",
+      confidential: "After the recipient receives a copy and the blessing is submitted to Church headquarters, all other paper and electronic copies are destroyed or deleted."
+    }
+  },
+  seventy: {
+    title: "General Handbook, 5.1.1.2 and 5.2.2 — General and Area Seventies",
+    url: "https://www.churchofjesuschrist.org/study/manual/general-handbook/5-general-and-area-leadership?lang=eng",
+    evidence: {
+      office: "Seventy is an office in the Melchizedek Priesthood.",
+      types: "The Church has General Authority Seventies and Area Seventies.",
+      direction: "Seventies act under the keys and direction of the Quorum of the Twelve Apostles.",
+      assist: "Seventies assist the Twelve in building up and regulating the Church.",
+      seven: "Seven members of the Seventy are called as presidents to preside over all members of the Seventy.",
+      one: "One of the seven presidents is chosen to preside over the other six.",
+      fullTime: "General Authority Seventies serve full-time in the Church.",
+      emeritus: "General Authority Seventies are generally released in the year they turn 70 and granted emeritus status.",
+      areaNotFullTime: "Area Seventies are not called to full-time service.",
+      areaYears: "Area Seventies typically serve for five years.",
+      areaGeography: "Area Seventies are usually assigned to serve in the geographic area where they live.",
+      sustained: "Area Seventies are sustained in general conference.",
+      areaQuorums: "Area Seventies belong to geographically organized quorums of the Seventy, presided over by the Presidency of the Seventy."
+    }
+  },
+  apostle: {
+    title: "General Handbook, 5.1.1.1 — First Presidency and Quorum of the Twelve Apostles",
+    url: "https://www.churchofjesuschrist.org/study/manual/general-handbook/5-general-and-area-leadership?lang=eng",
+    evidence: {
+      senior: "The President of the Church is the senior Apostle.",
+      called: "The Lord calls men through the President of the Church to be ordained as Apostles and serve in the Quorum of the Twelve Apostles.",
+      direction: "The Quorum of the Twelve acts under the direction of the First Presidency.",
+      build: "The Quorum of the Twelve acts to build up and regulate the Church in all nations.",
+      keys: "Each Apostle holds all the keys of the kingdom and exercises them under the direction of the President of the Church.",
+      witnesses: "The Twelve Apostles are special witnesses of the name of Jesus Christ.",
+      resurrection: "The Apostles witness to the world of Jesus Christ’s divinity and the reality of His Resurrection.",
+      fullTime: "Apostles serve full-time in the Church for the remainder of their lives.",
+      council: "The First Presidency and Quorum of the Twelve together form a council of prophets, seers, and revelators.",
+      unanimous: "Under the Lord’s direction and by unanimous voice, this council has authority to declare and interpret doctrine and establish Church policy."
+    }
   }
 };
 
-function makeItem(text, isLie, explanation, sourceKey, evidenceKey) {
-  return { text, isLie, explanation, sourceKey, evidenceKey };
+function fact(text, sourceKey, evidenceKey, isLie = false) {
+  return {
+    text,
+    isLie,
+    sourceKey,
+    evidenceKey,
+    explanation: sources[sourceKey].evidence[evidenceKey]
+  };
 }
-function trueFact(text, explanation, sourceKey, evidenceKey) {
-  return makeItem(text, false, explanation, sourceKey, evidenceKey);
+function T(text, sourceKey, evidenceKey) {
+  return fact(text, sourceKey, evidenceKey, false);
 }
-function falseFact(text, explanation, sourceKey, evidenceKey) {
-  return makeItem(text, true, explanation, sourceKey, evidenceKey);
+function F(text, sourceKey, evidenceKey) {
+  return fact(text, sourceKey, evidenceKey, true);
 }
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -306,89 +378,172 @@ function buildDeck(name, truths, lies) {
       }
     }
   }
-  if (candidates.length < 250) throw new Error(`${name} has only ${candidates.length} possible question cards.`);
+  if (candidates.length < 250) {
+    throw new Error(`${name} has only ${candidates.length} possible question cards.`);
+  }
   return { name, questions: shuffle(candidates).slice(0, 250) };
 }
 
 const decks = {
   deacons: buildDeck("Deacons Quorum", [
-    trueFact("Young men join the deacons quorum beginning in January of the year they turn 12.", "The handbook gives January of the year a young man turns 12 as the time he joins the deacons quorum.", "quorum", "deaconAge"),
-    trueFact("Young men may be ordained deacons at that time if they are prepared and worthy.", "Eligibility to be ordained at that time depends on being prepared and worthy.", "quorum", "prepared"),
-    trueFact("An ordained deacon serves as president of the deacons quorum.", "The handbook says an ordained deacon quorum member serves as the quorum president.", "quorum", "deaconPresident"),
-    trueFact("Where possible, one or two counselors and a secretary may serve with the deacons quorum president.", "The handbook describes these possible quorum officers.", "quorum", "quorumOfficers"),
-    trueFact("The deacons quorum counselors and secretary must also be deacons.", "The handbook specifies that these officers must also be deacons.", "quorum", "deaconOfficers"),
-    trueFact("Deacons may pass the sacrament.", "The handbook lists deacons among those who may pass the sacrament.", "sacrament", "pass"),
-    trueFact("Deacons assist the bishop in administering temporal things.", "The handbook lists assisting the bishop in administering temporal things as another deacon duty.", "quorum", "deaconDuties"),
-    trueFact("The deacons quorum president holds priesthood keys.", "The handbook identifies the deacons quorum president as a quorum leader who holds priesthood keys.", "quorum", "keys")
+    T("Young men join the deacons quorum beginning in January of the year they turn 12.", "quorum", "deaconAge"),
+    T("Young men may be ordained deacons at that time if they are prepared and worthy.", "quorum", "prepared"),
+    T("An ordained deacon serves as president of the deacons quorum.", "quorum", "deaconPresident"),
+    T("Where possible, one or two counselors and a secretary may serve with the deacons quorum president.", "quorum", "quorumOfficers"),
+    T("The deacons quorum counselors and secretary must also be deacons.", "quorum", "deaconOfficers"),
+    T("Deacons may pass the sacrament.", "sacrament", "pass"),
+    T("Deacons assist the bishop in administering temporal things.", "quorum", "deaconDuties"),
+    T("The deacons quorum president holds priesthood keys.", "quorum", "keys")
   ], [
-    falseFact("Young men join the deacons quorum in January of the year they turn 14.", "The handbook gives age 12, not age 14, for joining the deacons quorum.", "quorum", "deaconAge"),
-    falseFact("An ordained teacher serves as president of the deacons quorum.", "The deacons quorum president is an ordained deacon quorum member.", "quorum", "deaconPresident"),
-    falseFact("Deacons may bless the sacrament.", "The handbook lists priests and Melchizedek Priesthood holders—not deacons—as those who may bless the sacrament.", "sacrament", "bless"),
-    falseFact("Deacons may prepare the sacrament.", "The handbook lists teachers, priests, and Melchizedek Priesthood holders—not deacons—as those who may prepare it.", "sacrament", "prepare"),
-    falseFact("The deacons quorum counselors and secretary must be teachers.", "The handbook says these officers must also be deacons.", "quorum", "deaconOfficers"),
-    falseFact("The teachers quorum president holds the keys of the deacons quorum.", "The handbook identifies each quorum's own president, not the teachers quorum president, as holding that quorum's keys.", "quorum", "keys")
+    F("Young men join the deacons quorum in January of the year they turn 14.", "quorum", "deaconAge"),
+    F("An ordained teacher serves as president of the deacons quorum.", "quorum", "deaconPresident"),
+    F("Deacons may bless the sacrament.", "sacrament", "bless"),
+    F("Deacons may prepare the sacrament.", "sacrament", "prepare"),
+    F("The deacons quorum counselors and secretary must be teachers.", "quorum", "deaconOfficers"),
+    F("The teachers quorum president holds the keys of the deacons quorum.", "quorum", "keys")
   ]),
 
   teachers: buildDeck("Teachers Quorum", [
-    trueFact("Young men join the teachers quorum beginning in January of the year they turn 14.", "The handbook gives January of the year a young man turns 14 as the time he joins the teachers quorum.", "quorum", "teacherAge"),
-    trueFact("Young men may be ordained teachers at that time if they are prepared and worthy.", "Eligibility to be ordained at that time depends on being prepared and worthy.", "quorum", "prepared"),
-    trueFact("An ordained teacher serves as president of the teachers quorum.", "The handbook says an ordained teacher quorum member serves as the quorum president.", "quorum", "teacherPresident"),
-    trueFact("Where possible, one or two counselors and a secretary may serve with the teachers quorum president.", "The handbook describes these possible quorum officers.", "quorum", "quorumOfficers"),
-    trueFact("The teachers quorum counselors and secretary must also be teachers.", "The handbook specifies that these officers must also be teachers.", "quorum", "teacherOfficers"),
-    trueFact("Teachers have the same duties as deacons.", "The handbook says teachers have the same duties as deacons.", "quorum", "teacherDuties"),
-    trueFact("Teachers may prepare the sacrament.", "The handbook lists teachers among those who may prepare the sacrament.", "sacrament", "prepare"),
-    trueFact("Teachers may pass the sacrament.", "The handbook lists teachers among those who may pass the sacrament.", "sacrament", "pass"),
-    trueFact("Teachers serve as ministering brothers.", "The handbook includes serving as ministering brothers among teachers' duties.", "quorum", "teacherDuties")
+    T("Young men join the teachers quorum beginning in January of the year they turn 14.", "quorum", "teacherAge"),
+    T("Young men may be ordained teachers at that time if they are prepared and worthy.", "quorum", "prepared"),
+    T("An ordained teacher serves as president of the teachers quorum.", "quorum", "teacherPresident"),
+    T("Where possible, one or two counselors and a secretary may serve with the teachers quorum president.", "quorum", "quorumOfficers"),
+    T("The teachers quorum counselors and secretary must also be teachers.", "quorum", "teacherOfficers"),
+    T("Teachers have the same duties as deacons.", "quorum", "teacherDuties"),
+    T("Teachers may prepare the sacrament.", "sacrament", "prepare"),
+    T("Teachers may pass the sacrament.", "sacrament", "pass"),
+    T("Teachers serve as ministering brothers.", "quorum", "teacherDuties")
   ], [
-    falseFact("Young men join the teachers quorum in January of the year they turn 12.", "The handbook gives age 14, not age 12, for joining the teachers quorum.", "quorum", "teacherAge"),
-    falseFact("An ordained deacon serves as president of the teachers quorum.", "The teachers quorum president is an ordained teacher quorum member.", "quorum", "teacherPresident"),
-    falseFact("Teachers may bless the sacrament.", "The handbook lists priests and Melchizedek Priesthood holders—not teachers—as those who may bless the sacrament.", "sacrament", "bless"),
-    falseFact("Teachers may not prepare the sacrament.", "The handbook says teachers may prepare the sacrament.", "sacrament", "prepare"),
-    falseFact("Only deacons may pass the sacrament.", "The handbook also lists teachers, priests, and Melchizedek Priesthood holders as able to pass it.", "sacrament", "pass"),
-    falseFact("The teachers quorum counselors and secretary must be deacons.", "The handbook says these officers must also be teachers.", "quorum", "teacherOfficers")
+    F("Young men join the teachers quorum in January of the year they turn 12.", "quorum", "teacherAge"),
+    F("An ordained deacon serves as president of the teachers quorum.", "quorum", "teacherPresident"),
+    F("Teachers may bless the sacrament.", "sacrament", "bless"),
+    F("Teachers may not prepare the sacrament.", "sacrament", "prepare"),
+    F("Only deacons may pass the sacrament.", "sacrament", "pass"),
+    F("The teachers quorum counselors and secretary must be deacons.", "quorum", "teacherOfficers")
   ]),
 
   priests: buildDeck("Priests Quorum", [
-    trueFact("Young men join the priests quorum beginning in January of the year they turn 16.", "The handbook gives January of the year a young man turns 16 as the time he joins the priests quorum.", "quorum", "priestAge"),
-    trueFact("Young men may be ordained priests at that time if they are prepared and worthy.", "Eligibility to be ordained at that time depends on being prepared and worthy.", "quorum", "prepared"),
-    trueFact("The bishop is the president of the priests quorum.", "The handbook identifies the bishop as president of the priests quorum.", "quorum", "priestPresident"),
-    trueFact("The bishop calls one or two quorum members to serve as assistants.", "The handbook says the bishop calls one or two quorum members as assistants.", "quorum", "priestAssistants"),
-    trueFact("A secretary may also be called to the priests quorum.", "The handbook says a secretary may also be called.", "quorum", "priestSecretary"),
-    trueFact("The priests quorum assistants and secretary should be ordained priests.", "The handbook says these officers should be ordained priests.", "quorum", "priestOfficers"),
-    trueFact("Priests have the same duties as deacons and teachers.", "The handbook says priests have the same duties as deacons and teachers.", "quorum", "priestDuties"),
-    trueFact("Priests may prepare the sacrament.", "The handbook lists priests among those who may prepare the sacrament.", "sacrament", "prepare"),
-    trueFact("Priests may bless the sacrament.", "The handbook lists priests among those who may bless the sacrament.", "sacrament", "bless"),
-    trueFact("Priests may pass the sacrament.", "The handbook lists priests among those who may pass the sacrament.", "sacrament", "pass")
+    T("Young men join the priests quorum beginning in January of the year they turn 16.", "quorum", "priestAge"),
+    T("Young men may be ordained priests at that time if they are prepared and worthy.", "quorum", "prepared"),
+    T("The bishop is the president of the priests quorum.", "quorum", "priestPresident"),
+    T("The bishop calls one or two quorum members to serve as assistants.", "quorum", "priestAssistants"),
+    T("A secretary may also be called to the priests quorum.", "quorum", "priestSecretary"),
+    T("The priests quorum assistants and secretary should be ordained priests.", "quorum", "priestOfficers"),
+    T("Priests have the same duties as deacons and teachers.", "quorum", "priestDuties"),
+    T("Priests may prepare the sacrament.", "sacrament", "prepare"),
+    T("Priests may bless the sacrament.", "sacrament", "bless"),
+    T("Priests may pass the sacrament.", "sacrament", "pass")
   ], [
-    falseFact("Young men join the priests quorum in January of the year they turn 14.", "The handbook gives age 16, not age 14, for joining the priests quorum.", "quorum", "priestAge"),
-    falseFact("A young man who is an ordained priest is always the president of the priests quorum.", "The handbook identifies the bishop as president of the priests quorum.", "quorum", "priestPresident"),
-    falseFact("The bishop calls three or four quorum members to serve as assistants.", "The handbook says the bishop calls one or two quorum members as assistants.", "quorum", "priestAssistants"),
-    falseFact("The priests quorum secretary must be a teacher, not a priest.", "The handbook says the secretary should be an ordained priest.", "quorum", "priestOfficers"),
-    falseFact("Priests may not bless the sacrament.", "The handbook lists priests among those who may bless the sacrament.", "sacrament", "bless"),
-    falseFact("Only priests may pass the sacrament.", "The handbook also lists deacons, teachers, and Melchizedek Priesthood holders as able to pass it.", "sacrament", "pass")
+    F("Young men join the priests quorum in January of the year they turn 14.", "quorum", "priestAge"),
+    F("An ordained priest is always the president of the priests quorum.", "quorum", "priestPresident"),
+    F("The bishop calls three or four quorum members to serve as assistants.", "quorum", "priestAssistants"),
+    F("The priests quorum secretary should be a teacher, not a priest.", "quorum", "priestOfficers"),
+    F("Priests may not bless the sacrament.", "sacrament", "bless"),
+    F("Only priests may pass the sacrament.", "sacrament", "pass")
   ]),
 
   elders: buildDeck("Elders Quorum", [
-    trueFact("Each ward has an elders quorum.", "The handbook states that each ward has an elders quorum.", "elders", "wardQuorum"),
-    trueFact("The elders quorum includes all elders in the ward.", "The handbook lists all elders in the ward as members of the quorum.", "elders", "eldersMembership"),
-    trueFact("The elders quorum includes all prospective elders in the ward.", "The handbook includes prospective elders in the quorum.", "elders", "prospective"),
-    trueFact("The elders quorum includes high priests in the ward, with specified exceptions for certain stake and ward callings.", "The handbook describes high priests as members of the quorum, with specified exceptions.", "elders", "highPriests"),
-    trueFact("A young man may begin attending elders quorum meetings when he turns 18, even if he is not yet ordained an elder.", "The handbook describes this option for a young man who turns 18.", "elders", "age18"),
-    trueFact("The young man counsels with his parents and bishop about beginning to attend.", "The handbook says he counsels with his parents and bishop to make this decision.", "elders", "counsel"),
-    trueFact("The elders quorum president is directly responsible to the stake presidency.", "The handbook states that the president is directly responsible to the stake presidency.", "elders", "stake"),
-    trueFact("The elders quorum president also receives guidance from the bishop.", "The handbook says the president receives guidance from the bishop.", "elders", "bishopGuidance"),
-    trueFact("After consulting with the bishop, the stake president calls an elder or high priest as elders quorum president.", "The handbook describes this calling process.", "elders", "calling"),
-    trueFact("The stake president sets apart the elders quorum president and confers the keys of his calling.", "The handbook describes the stake president setting apart the president and conferring those keys.", "elders", "setApart"),
-    trueFact("The elders quorum president serves on the ward council.", "Serving on the ward council is listed among the president's responsibilities.", "elders", "wardCouncil"),
-    trueFact("The elders quorum president seeks the bishop's approval for ministering assignments.", "The handbook says the president seeks the bishop's approval for these assignments.", "elders", "assignments"),
-    trueFact("The elders quorum president coordinates ministering assignments with the Relief Society presidency.", "The handbook directs the presidencies to coordinate ministering assignments.", "elders", "coordinate")
+    T("Each ward has an elders quorum.", "elders", "wardQuorum"),
+    T("The elders quorum includes all elders in the ward.", "elders", "eldersMembership"),
+    T("The elders quorum includes all prospective elders in the ward.", "elders", "prospective"),
+    T("The quorum includes high priests in the ward, with specified exceptions for certain stake and ward callings.", "elders", "highPriests"),
+    T("A young man may begin attending elders quorum meetings when he turns 18, even if he is not yet ordained an elder.", "elders", "age18"),
+    T("The young man counsels with his parents and bishop about beginning to attend.", "elders", "counsel"),
+    T("The elders quorum president is directly responsible to the stake presidency.", "elders", "stake"),
+    T("The elders quorum president also receives guidance from the bishop.", "elders", "bishopGuidance"),
+    T("After consulting with the bishop, the stake president calls an elder or high priest as elders quorum president.", "elders", "calling"),
+    T("The stake president sets apart the elders quorum president and confers the keys of his calling.", "elders", "setApart"),
+    T("The elders quorum president serves on the ward council.", "elders", "wardCouncil"),
+    T("The elders quorum president seeks the bishop’s approval for ministering assignments.", "elders", "assignments"),
+    T("The elders quorum president coordinates ministering assignments with the Relief Society presidency.", "elders", "coordinate")
   ], [
-    falseFact("The elders quorum president is directly responsible only to the bishop, not the stake presidency.", "The handbook says he is directly responsible to the stake presidency, while also receiving guidance from the bishop.", "elders", "stake"),
-    falseFact("The bishop calls the elders quorum president without consulting the stake president.", "The handbook says the stake president calls him after consulting with the bishop.", "elders", "calling"),
-    falseFact("The elders quorum president does not serve on the ward council.", "Serving on the ward council is specifically listed as one of his responsibilities.", "elders", "wardCouncil"),
-    falseFact("The elders quorum president can make ministering assignments without seeking the bishop's approval.", "The handbook says he seeks the bishop's approval for ministering assignments.", "elders", "assignments"),
-    falseFact("The stake president does not set apart the elders quorum president or confer the keys of his calling.", "The handbook assigns both actions to the stake president.", "elders", "setApart"),
-    falseFact("The elders quorum president never receives guidance from the bishop.", "The handbook says he also receives guidance from the bishop.", "elders", "bishopGuidance")
+    F("The elders quorum president is directly responsible only to the bishop, not the stake presidency.", "elders", "stake"),
+    F("The bishop calls the elders quorum president without consulting the stake president.", "elders", "calling"),
+    F("The elders quorum president does not serve on the ward council.", "elders", "wardCouncil"),
+    F("The elders quorum president can make ministering assignments without seeking the bishop’s approval.", "elders", "assignments"),
+    F("The stake president does not set apart the elders quorum president or confer the keys of his calling.", "elders", "setApart"),
+    F("The elders quorum president never receives guidance from the bishop.", "elders", "bishopGuidance")
+  ]),
+
+  highPriests: buildDeck("High Priests", [
+    T("The stake president is the presiding high priest in the stake.", "highPriest", "presides"),
+    T("The stake presidency presides over Melchizedek Priesthood holders in the stake.", "highPriest", "presides"),
+    T("The stake president is president of the stake high priests quorum.", "highPriest", "president"),
+    T("The stake president and his counselors form the presidency of the stake high priests quorum.", "highPriest", "presidency"),
+    T("Bishops and their counselors are included in the stake high priests quorum.", "highPriest", "bishops"),
+    T("High councilors are included in the stake high priests quorum.", "highPriest", "councilors"),
+    T("Functioning patriarchs are included in the stake high priests quorum.", "highPriest", "patriarchs"),
+    T("High priests quorum members attend their ward elders quorum meetings if they are not assigned elsewhere.", "highPriest", "eldersMeetings"),
+    T("The stake president oversees ordinations to the offices of elder and high priest.", "highPriest", "ordinations")
+  ], [
+    F("The bishop is the president of the stake high priests quorum.", "highPriest", "president"),
+    F("Stake high priests quorums are organized in every district.", "highPriest", "district"),
+    F("The stake high priests quorum includes only bishops and their counselors.", "highPriest", "bishops"),
+    F("High priests quorum members must never attend elders quorum meetings.", "highPriest", "eldersMeetings"),
+    F("The stake presidency does not preside over Melchizedek Priesthood holders in the stake.", "highPriest", "presides")
+  ]),
+
+  patriarch: buildDeck("Patriarch", [
+    T("Patriarch is an office in the Melchizedek Priesthood.", "patriarch", "office"),
+    T("Patriarchs are called and ordained to give patriarchal blessings to worthy Church members.", "patriarch", "blessings"),
+    T("A patriarch must be a worthy Melchizedek Priesthood holder.", "patriarch", "worthy"),
+    T("A patriarch should be mature in gospel understanding and sensitive to the Spirit.", "patriarch", "mature"),
+    T("A patriarch should have received his own patriarchal blessing.", "patriarch", "ownBlessing"),
+    T("Normally, a patriarch should be age 55 or older.", "patriarch", "age"),
+    T("A man must be married when he is called as a patriarch.", "patriarch", "married"),
+    T("The Quorum of the Twelve Apostles directs the calling of stake patriarchs.", "patriarch", "twelve"),
+    T("The stake president may recommend whom to call as a stake patriarch.", "patriarch", "recommend"),
+    T("The Quorum of the Twelve Apostles must approve the recommendation before the stake president is authorized to interview and call the patriarch.", "patriarch", "approval"),
+    T("When authorized, the stake president ordains the patriarch and does not delegate this responsibility to a counselor.", "patriarch", "ordination"),
+    T("An actively serving patriarch is a member of the stake high priests quorum.", "patriarch", "quorum"),
+    T("Other paper and electronic copies of a patriarchal blessing are destroyed or deleted after the recipient receives a copy and it is submitted to Church headquarters.", "patriarch", "confidential")
+  ], [
+    F("A patriarch is an office in the Aaronic Priesthood.", "patriarch", "office"),
+    F("A stake patriarch may be called without approval from the Quorum of the Twelve Apostles.", "patriarch", "approval"),
+    F("A man must be unmarried when he is called as a patriarch.", "patriarch", "married"),
+    F("The stake president may delegate ordaining a patriarch to a counselor.", "patriarch", "ordination"),
+    F("An actively serving patriarch is excluded from the stake high priests quorum.", "patriarch", "quorum")
+  ]),
+
+  seventies: buildDeck("Seventy", [
+    T("Seventy is an office in the Melchizedek Priesthood.", "seventy", "office"),
+    T("The Church has General Authority Seventies and Area Seventies.", "seventy", "types"),
+    T("Seventies act under the keys and direction of the Quorum of the Twelve Apostles.", "seventy", "direction"),
+    T("Seventies assist the Twelve in building up and regulating the Church.", "seventy", "assist"),
+    T("Seven members of the Seventy are called as presidents over all members of the Seventy.", "seventy", "seven"),
+    T("One of the seven presidents presides over the other six.", "seventy", "one"),
+    T("General Authority Seventies serve full-time in the Church.", "seventy", "fullTime"),
+    T("General Authority Seventies are generally released in the year they turn 70 and granted emeritus status.", "seventy", "emeritus"),
+    T("Area Seventies are not called to full-time service.", "seventy", "areaNotFullTime"),
+    T("Area Seventies typically serve for five years.", "seventy", "areaYears"),
+    T("Area Seventies are usually assigned to the geographic area where they live.", "seventy", "areaGeography"),
+    T("Area Seventies are sustained in general conference.", "seventy", "sustained"),
+    T("Area Seventies belong to geographically organized quorums presided over by the Presidency of the Seventy.", "seventy", "areaQuorums")
+  ], [
+    F("Area Seventies are called to full-time service.", "seventy", "areaNotFullTime"),
+    F("General Authority Seventies are generally released in the year they turn 60.", "seventy", "emeritus"),
+    F("Only six members are called as presidents over all members of the Seventy.", "seventy", "seven"),
+    F("Area Seventies are never sustained in general conference.", "seventy", "sustained"),
+    F("Seventies act independently of the keys and direction of the Quorum of the Twelve Apostles.", "seventy", "direction")
+  ]),
+
+  apostles: buildDeck("Apostles", [
+    T("The President of the Church is the senior Apostle.", "apostle", "senior"),
+    T("The Lord calls men through the President of the Church to be ordained as Apostles and serve in the Quorum of the Twelve.", "apostle", "called"),
+    T("The Quorum of the Twelve acts under the direction of the First Presidency.", "apostle", "direction"),
+    T("The Quorum of the Twelve works to build up and regulate the Church in all nations.", "apostle", "build"),
+    T("Each Apostle holds all the keys of the kingdom and exercises them under the President of the Church’s direction.", "apostle", "keys"),
+    T("The Twelve Apostles are special witnesses of the name of Jesus Christ.", "apostle", "witnesses"),
+    T("The Apostles witness of Jesus Christ’s divinity and the reality of His Resurrection.", "apostle", "resurrection"),
+    T("Apostles serve full-time in the Church for the remainder of their lives.", "apostle", "fullTime"),
+    T("The First Presidency and Quorum of the Twelve together form a council of prophets, seers, and revelators.", "apostle", "council"),
+    T("By unanimous voice and under the Lord’s direction, that council has authority to declare and interpret doctrine and establish Church policy.", "apostle", "unanimous")
+  ], [
+    F("Apostles exercise all the keys of the kingdom independently of the President of the Church.", "apostle", "keys"),
+    F("The Quorum of the Twelve acts under the direction of the Area Presidency.", "apostle", "direction"),
+    F("Apostles serve for a five-year term.", "apostle", "fullTime"),
+    F("The Apostles are not special witnesses of Jesus Christ.", "apostle", "witnesses"),
+    F("Men are called to the Quorum of the Twelve by the Presidency of the Seventy.", "apostle", "called")
   ])
 };
 
@@ -664,7 +819,7 @@ function showAnswerReview(selectedStatement, timedOut) {
 
   const evidence = document.createElement("div");
   evidence.className = "evidence";
-  evidence.textContent = `Handbook phrase: “${source.evidence[lie.evidenceKey]}”`;
+  evidence.textContent = `Handbook evidence: “${source.evidence[lie.evidenceKey]}”`;
 
   const link = document.createElement("a");
   link.href = source.url;
