@@ -11,9 +11,15 @@
   --muted:#596a78; --line:#d8e1e7; --green:#e8f5ec; --red:#fff0ed;
 }
 * { box-sizing:border-box; }
+html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 body {
-  margin:0; padding:18px 14px 28px; background:#f4f8fa; color:var(--ink);
+  min-height:100vh; min-height:100dvh;
+  margin:0;
+  padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right))
+    max(24px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+  background:#f4f8fa; color:var(--ink);
   font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-tap-highlight-color:transparent;
 }
 body.timer-warning { animation:urgent-screen-flash .6s steps(1,end) infinite; }
 @keyframes urgent-screen-flash {
@@ -35,19 +41,21 @@ h2 { margin:0 0 10px; color:var(--navy); font-size:1.35rem; }
 .subtitle,.muted,.footer { color:var(--muted); }
 .subtitle { margin:4px 0; }
 .card {
-  margin:12px 0; padding:clamp(16px,3vw,26px); border:1px solid var(--line);
-  border-radius:18px; background:white; box-shadow:0 10px 28px #17324d0b;
+  min-width:0; margin:12px 0; padding:clamp(16px,3vw,26px);
+  border:1px solid var(--line); border-radius:18px; background:white;
+  box-shadow:0 10px 28px #17324d0b; overflow-wrap:anywhere;
 }
 .row { display:flex; flex-wrap:wrap; gap:12px; align-items:end; }
-.field { flex:1 1 180px; }
+.field { flex:1 1 180px; min-width:0; }
 label { display:block; margin:0 0 5px; font-weight:700; }
 input,select {
   width:100%; min-height:44px; padding:9px 11px; border:1px solid #b9c9d3;
   border-radius:9px; background:white; color:var(--ink); font:inherit;
 }
 button {
-  min-height:44px; padding:10px 16px; border:0; border-radius:9px;
-  background:var(--blue); color:white; cursor:pointer; font:inherit; font-weight:750;
+  min-width:44px; min-height:44px; padding:10px 16px; border:0; border-radius:9px;
+  background:var(--blue); color:white; cursor:pointer; touch-action:manipulation;
+  font:inherit; font-weight:750;
 }
 button:hover { filter:brightness(.94); }
 button:focus-visible,input:focus-visible,select:focus-visible {
@@ -65,30 +73,33 @@ button.secondary { background:#e6eef2; color:var(--navy); }
 }
 .deck-picker-top p { margin:0; }
 .deck-actions { display:flex; flex-wrap:wrap; gap:8px; }
-.deck-actions button { min-height:36px; padding:6px 11px; font-size:.9rem; }
+.deck-actions button { min-height:40px; padding:6px 11px; font-size:.9rem; }
 .deck-options { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:8px; }
 .deck-option {
-  display:flex; align-items:center; gap:9px; min-height:44px; margin:0; padding:9px 11px;
+  display:flex; align-items:center; gap:9px; min-height:48px; margin:0; padding:9px 11px;
   border:1px solid var(--line); border-radius:9px; background:#f8fafb; cursor:pointer;
 }
 .deck-option:hover { background:var(--pale); }
-.deck-option input { width:20px; min-height:20px; height:20px; margin:0; accent-color:var(--blue); }
+.deck-option input {
+  flex:0 0 20px; width:20px; min-height:20px; height:20px; margin:0;
+  accent-color:var(--blue);
+}
 .deck-option span { font-weight:650; }
 .selection-status { margin:9px 0 0; color:var(--muted); font-size:.9rem; }
 .topline { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; margin-bottom:12px; }
-.pill { background:var(--pale); font-size:.88rem; }
+.pill { min-width:0; background:var(--pale); font-size:.88rem; }
 .timer-pill { background:#fff3d6; color:#6c4b00; }
 .timer-pill.urgent { background:#ffe3df; color:#9a2d20; animation:pulse 1s infinite; }
 @keyframes pulse { 50% { opacity:.65; } }
 .question {
-  margin:6px 0 12px; color:var(--navy); font-size:1.6rem;
-  line-height:1.3; font-weight:800;
+  margin:6px 0 12px; color:var(--navy);
+  font-size:clamp(1.25rem,4vw,1.6rem); line-height:1.3; font-weight:800;
 }
 .answer {
-  display:flex; align-items:flex-start; gap:12px; width:100%; margin:8px 0;
+  display:flex; align-items:flex-start; gap:12px; width:100%; min-height:56px; margin:8px 0;
   padding:14px 16px; border:1px solid var(--line); border-radius:9px;
-  background:#f5f8fa; color:var(--ink); text-align:left; font:inherit;
-  font-size:1.25rem; line-height:1.4; font-weight:600;
+  background:#f5f8fa; color:var(--ink); text-align:left; touch-action:manipulation;
+  font:inherit; font-size:clamp(1rem,3.8vw,1.2rem); line-height:1.4; font-weight:600;
 }
 .answer:hover { background:#eaf2f6; }
 .answer:disabled { cursor:default; opacity:1; }
@@ -109,6 +120,64 @@ a { color:#135d83; font-weight:650; }
 .average-time { margin-left:10px; color:var(--muted); font-size:.92rem; }
 .footer { margin-top:14px; text-align:center; font-size:.88rem; }
 .notice { font-size:.9rem; }
+.next-controls { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:10px; }
+.next-player-notice { color:var(--navy); font-weight:700; }
+.round-instructions {
+  min-height:clamp(100px,18vh,160px); margin:14px 0; padding:14px;
+  border:1px solid var(--line); border-radius:12px; background:#f8fafb;
+}
+.final-stats { margin:10px 0; padding:12px; border-radius:10px; background:var(--pale); }
+.final-stats p { margin:4px 0; }
+
+@media (min-width:641px) and (max-width:900px) {
+  .shell { width:min(100%,900px); }
+  .deck-options { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:640px) {
+  body {
+    padding-left:max(10px,env(safe-area-inset-left));
+    padding-right:max(10px,env(safe-area-inset-right));
+  }
+  header { margin-bottom:12px; }
+  h1 { font-size:clamp(1.8rem,9vw,2.5rem); }
+  .card { margin:10px 0; padding:16px; border-radius:14px; }
+  .row { align-items:stretch; gap:10px; }
+  .row > .field { flex:1 1 100%; }
+  .mode-buttons { display:grid; grid-template-columns:1fr; gap:8px; }
+  .mode-buttons button,#startButton,#beginRoundButton,#nextButton,#playAgain { width:100%; }
+  .deck-picker { padding:12px; }
+  .deck-picker-top { align-items:flex-start; flex-direction:column; }
+  .deck-actions { width:100%; }
+  .deck-actions button { flex:1 1 120px; min-height:44px; }
+  .deck-options { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+  .deck-option { min-width:0; padding:8px; font-size:.92rem; }
+  .deck-option span { line-height:1.25; }
+  .topline { justify-content:stretch; gap:6px; }
+  .topline .pill { flex:1 1 auto; text-align:center; overflow-wrap:anywhere; }
+  .answer { gap:8px; padding:13px 11px; line-height:1.35; }
+  .next-controls { align-items:stretch; flex-direction:column; }
+  .next-player-notice { text-align:center; }
+  .average-time { display:block; margin-left:0; }
+  .round-instructions { min-height:110px; }
+}
+@media (max-width:360px) {
+  .deck-options { grid-template-columns:1fr; }
+  .card { padding:13px; }
+  .pill { font-size:.8rem; }
+}
+@media (max-height:500px) and (orientation:landscape) {
+  body { padding-top:10px; }
+  header { margin-bottom:8px; }
+  header h1 { font-size:1.8rem; }
+  .card { padding:14px; }
+  .round-instructions { min-height:70px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation-duration:.01ms!important; animation-iteration-count:1!important;
+    transition-duration:.01ms!important; scroll-behavior:auto!important;
+  }
+}
 </style>
 </head>
 <body>
@@ -126,7 +195,9 @@ a { color:#135d83; font-weight:650; }
 
       <div class="mode-buttons">
         <button type="button" id="singleMode">Single player</button>
-        <button type="button" id="competitionMode" class="secondary">Competition · 2–6 players</button>
+        <button type="button" id="riskyBusinessMode" class="secondary">Risky Business</button>
+        <button type="button" id="soloShootOutMode" class="secondary">Solo Shoot Out</button>
+        <button type="button" id="competitionMode" class="secondary">Competition · 1–6 players</button>
       </div>
 
       <fieldset class="deck-picker">
@@ -152,10 +223,33 @@ a { color:#135d83; font-weight:650; }
       </fieldset>
 
       <div class="row">
+        <div class="field hidden" id="roundDurationField">
+          <label for="roundDuration">Risky Business round timer</label>
+          <select id="roundDuration">
+            <option value="60">1 minute</option>
+            <option value="120" selected>2 minutes</option>
+            <option value="180">3 minutes</option>
+            <option value="300">5 minutes</option>
+            <option value="600">10 minutes</option>
+          </select>
+        </div>
+
+        <div class="field hidden" id="cardsPerRoundField">
+          <label for="cardsPerRound">Cards per round</label>
+          <select id="cardsPerRound">
+            <option value="5" selected>5 cards</option>
+            <option value="10">10 cards</option>
+            <option value="15">15 cards</option>
+            <option value="20">20 cards</option>
+            <option value="25">25 cards</option>
+          </select>
+        </div>
+
         <div class="field hidden" id="countField">
           <label for="playerCount">Number of players</label>
           <select id="playerCount">
-            <option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+            <option>1</option><option>2</option><option>3</option>
+            <option>4</option><option>5</option><option>6</option>
           </select>
         </div>
         <div class="field hidden" id="questionsPerPlayerField">
@@ -190,6 +284,14 @@ a { color:#135d83; font-weight:650; }
       <button type="button" id="startButton">Start game</button>
     </section>
 
+    <section class="card hidden" id="roundIntro">
+      <h2 id="roundIntroTitle"></h2>
+      <div class="round-instructions" aria-label="Round instructions">
+        <!-- Intentionally left blank for instructions to be added later. -->
+      </div>
+      <button type="button" id="beginRoundButton">Begin Round</button>
+    </section>
+
     <section class="card hidden" id="game">
       <div class="topline">
         <span class="pill timer-pill hidden" id="timerPill" aria-live="polite"></span>
@@ -202,7 +304,10 @@ a { color:#135d83; font-weight:650; }
       <p class="muted">Tap the statement you think is the lie.</p>
       <div id="answers"></div>
       <div id="result" aria-live="polite"></div>
-      <button type="button" id="nextButton" class="hidden">Next question</button>
+      <div class="next-controls">
+        <button type="button" id="nextButton" class="hidden">Next question</button>
+        <span id="nextPlayerNotice" class="next-player-notice hidden" aria-live="polite"></span>
+      </div>
     </section>
 
     <section class="card hidden" id="finish">
@@ -350,12 +455,9 @@ function fact(text, sourceKey, evidenceKey, isLie = false) {
     explanation: sources[sourceKey].evidence[evidenceKey]
   };
 }
-function T(text, sourceKey, evidenceKey) {
-  return fact(text, sourceKey, evidenceKey, false);
-}
-function F(text, sourceKey, evidenceKey) {
-  return fact(text, sourceKey, evidenceKey, true);
-}
+const T = (text, sourceKey, evidenceKey) => fact(text, sourceKey, evidenceKey);
+const F = (text, sourceKey, evidenceKey) => fact(text, sourceKey, evidenceKey, true);
+
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -363,6 +465,7 @@ function shuffle(array) {
   }
   return array;
 }
+
 function buildDeck(name, truths, lies) {
   const candidates = [];
   for (let a = 0; a < truths.length - 2; a++) {
@@ -556,21 +659,27 @@ let currentPlayer = 0;
 let questions = [];
 let questionIndex = 0;
 let questionsPerPlayer = 5;
+let cardsPerRound = 5;
 let timeLimitSeconds = 0;
-let secondsRemaining = 0;
+let roundDurationSeconds = 120;
 let timerInterval = null;
 let timerDeadline = 0;
+let roundTimerDeadline = 0;
 let questionStartedAt = 0;
 let questionLocked = false;
 
 $("singleMode").addEventListener("click", () => setMode("single"));
+$("riskyBusinessMode").addEventListener("click", () => setMode("risky"));
+$("soloShootOutMode").addEventListener("click", () => setMode("solo"));
 $("competitionMode").addEventListener("click", () => setMode("competition"));
 $("playerCount").addEventListener("change", renderNameFields);
 $("startButton").addEventListener("click", startGame);
+$("beginRoundButton").addEventListener("click", beginRound);
 $("nextButton").addEventListener("click", nextQuestion);
 $("playAgain").addEventListener("click", () => {
   stopTimer();
   $("finish").classList.add("hidden");
+  $("roundIntro").classList.add("hidden");
   $("setup").classList.remove("hidden");
 });
 
@@ -589,12 +698,20 @@ $("clearDecks").addEventListener("click", () => {
 function setMode(nextMode) {
   mode = nextMode;
   $("singleMode").className = mode === "single" ? "" : "secondary";
+  $("riskyBusinessMode").className = mode === "risky" ? "" : "secondary";
+  $("soloShootOutMode").className = mode === "solo" ? "" : "secondary";
   $("competitionMode").className = mode === "competition" ? "" : "secondary";
+
+  $("roundDurationField").classList.toggle("hidden", mode !== "risky");
+  $("cardsPerRoundField").classList.toggle("hidden", mode !== "solo");
   $("countField").classList.toggle("hidden", mode !== "competition");
   $("questionsPerPlayerField").classList.toggle("hidden", mode !== "competition");
   $("timeLimitField").classList.toggle("hidden", mode !== "competition");
   $("nameFields").classList.toggle("hidden", mode !== "competition");
-  if (mode === "single") document.body.classList.remove("timer-warning");
+
+  if (mode !== "risky" && mode !== "competition") {
+    document.body.classList.remove("timer-warning");
+  }
   if (mode === "competition") renderNameFields();
 }
 
@@ -648,6 +765,13 @@ function startGame() {
     timeLimitSeconds = 0;
   }
 
+  if (mode === "risky") {
+    roundDurationSeconds = Number($("roundDuration").value);
+  }
+  if (mode === "solo") {
+    cardsPerRound = Number($("cardsPerRound").value);
+  }
+
   scores = players.map(() => 0);
   responseTimes = players.map(() => []);
   currentPlayer = 0;
@@ -657,7 +781,6 @@ function startGame() {
   selected.forEach(deckKey => {
     decks[deckKey].questions.forEach(question => questions.push(question));
   });
-
   shuffle(questions);
 
   if (mode === "competition") {
@@ -667,11 +790,32 @@ function startGame() {
       return;
     }
     questions = questions.slice(0, totalQuestions);
+  } else if (mode === "solo") {
+    questions = questions.slice(0, cardsPerRound);
   }
 
   $("setup").classList.add("hidden");
   $("finish").classList.add("hidden");
+  $("game").classList.add("hidden");
+
+  if (mode === "risky" || mode === "solo") {
+    $("roundIntroTitle").textContent =
+      mode === "risky" ? "Risky Business" : "Solo Shoot Out";
+    $("roundIntro").classList.remove("hidden");
+  } else {
+    $("roundIntro").classList.add("hidden");
+    $("game").classList.remove("hidden");
+    showQuestion();
+  }
+}
+
+function beginRound() {
+  $("roundIntro").classList.add("hidden");
   $("game").classList.remove("hidden");
+
+  if (mode === "risky") {
+    roundTimerDeadline = Date.now() + roundDurationSeconds * 1000;
+  }
   showQuestion();
 }
 
@@ -687,7 +831,6 @@ function renderScoreboard() {
     $("scoreboard").classList.add("hidden");
     return;
   }
-
   const entries = players.map((name, index) =>
     `<li><strong>${escapeHtml(name)}</strong>: ${scores[index]} point${scores[index] === 1 ? "" : "s"}<span class="average-time">· Avg. answer: ${averageAnswerTime(index)}</span></li>`
   );
@@ -710,10 +853,15 @@ function showQuestion() {
   $("progressPill").textContent = `Question ${questionIndex + 1} of ${questions.length}`;
   $("turnPill").textContent = mode === "competition"
     ? `CURRENTLY PLAYING · ${players[currentPlayer]}`
-    : "SINGLE PLAYER";
+    : mode === "risky"
+      ? "RISKY BUSINESS"
+      : mode === "solo"
+        ? "SOLO SHOOT OUT"
+        : "SINGLE PLAYER";
   $("questionText").textContent = question.prompt;
   $("result").replaceChildren();
   $("nextButton").classList.add("hidden");
+  $("nextPlayerNotice").classList.add("hidden");
   renderScoreboard();
 
   const answers = $("answers");
@@ -744,6 +892,20 @@ function startQuestionTimer() {
   const pill = $("timerPill");
   pill.classList.remove("hidden", "urgent");
 
+  if (mode === "risky") {
+    timerDeadline = roundTimerDeadline;
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+      const secondsRemaining = Math.max(0, Math.ceil((timerDeadline - Date.now()) / 1000));
+      updateTimerDisplay(secondsRemaining);
+      if (Date.now() >= timerDeadline) {
+        stopTimer();
+        finishGame();
+      }
+    }, 200);
+    return;
+  }
+
   if (mode !== "competition" || timeLimitSeconds === 0) {
     pill.textContent = "NO TIME LIMIT";
     document.body.classList.remove("timer-warning");
@@ -751,12 +913,11 @@ function startQuestionTimer() {
   }
 
   timerDeadline = Date.now() + timeLimitSeconds * 1000;
-  secondsRemaining = timeLimitSeconds;
   updateTimerDisplay();
 
   timerInterval = setInterval(() => {
-    secondsRemaining = Math.max(0, Math.ceil((timerDeadline - Date.now()) / 1000));
-    updateTimerDisplay();
+    const secondsRemaining = Math.max(0, Math.ceil((timerDeadline - Date.now()) / 1000));
+    updateTimerDisplay(secondsRemaining);
 
     if (Date.now() >= timerDeadline) {
       stopTimer();
@@ -765,13 +926,15 @@ function startQuestionTimer() {
   }, 200);
 }
 
-function updateTimerDisplay() {
+function updateTimerDisplay(secondsRemaining) {
+  if (secondsRemaining === undefined) {
+    secondsRemaining = Math.max(0, Math.ceil((timerDeadline - Date.now()) / 1000));
+  }
   const pill = $("timerPill");
   pill.textContent = `TIME LEFT · ${secondsRemaining}s`;
 
   const isUrgent =
-    mode === "competition" &&
-    timeLimitSeconds > 0 &&
+    (mode === "competition" && timeLimitSeconds > 0 || mode === "risky") &&
     secondsRemaining <= 10;
 
   pill.classList.toggle("urgent", isUrgent);
@@ -808,11 +971,15 @@ function showAnswerReview(selectedStatement, timedOut) {
   feedback.className = `feedback ${timedOut || selectedStatement?.isLie !== true ? "bad" : "good"}`;
 
   const heading = document.createElement("strong");
-  heading.textContent = timedOut
-    ? "Time’s up! No points awarded."
-    : selectedStatement.isLie
-      ? "Correct — you found the lie!"
-      : "Not quite — no point this turn.";
+  if (timedOut) {
+    heading.textContent = "Time’s up! No points awarded.";
+  } else if (selectedStatement.isLie) {
+    heading.textContent = "Correct — you found the lie!";
+  } else if (mode === "solo") {
+    heading.textContent = "Not quite — one point deducted.";
+  } else {
+    heading.textContent = "Not quite — no point this turn.";
+  }
 
   const explanation = document.createElement("p");
   explanation.textContent = lie.explanation;
@@ -829,12 +996,23 @@ function showAnswerReview(selectedStatement, timedOut) {
 
   feedback.append(heading, explanation, evidence, link);
   $("result").replaceChildren(feedback);
+
+  if (mode === "competition") {
+    const nextPlayerIndex = (currentPlayer + 1) % players.length;
+    $("nextPlayerNotice").textContent = `Next Up: ${players[nextPlayerIndex]}`;
+    $("nextPlayerNotice").classList.remove("hidden");
+  }
   $("nextButton").classList.remove("hidden");
 }
 
 function submitAnswer(statement) {
   if (questionLocked) return;
 
+  if (mode === "risky" && Date.now() >= roundTimerDeadline) {
+    stopTimer();
+    finishGame();
+    return;
+  }
   if (mode === "competition" && timeLimitSeconds > 0 && Date.now() >= timerDeadline) {
     stopTimer();
     handleTimeout();
@@ -845,7 +1023,12 @@ function submitAnswer(statement) {
   lockAnswers();
 
   responseTimes[currentPlayer].push((Date.now() - questionStartedAt) / 1000);
-  if (statement.isLie) scores[currentPlayer] += 1;
+  if (statement.isLie) {
+    scores[currentPlayer] += 1;
+  } else if (mode === "solo") {
+    scores[currentPlayer] -= 1;
+  }
+
   renderScoreboard();
   showAnswerReview(statement, false);
 }
@@ -868,6 +1051,7 @@ function nextQuestion() {
 function finishGame() {
   stopTimer();
   $("game").classList.add("hidden");
+  $("roundIntro").classList.add("hidden");
   $("finish").classList.remove("hidden");
 
   if (mode === "competition") {
@@ -879,8 +1063,14 @@ function finishGame() {
     $("finalScore").innerHTML =
       `<p>${winners.length === 1 ? "Winner" : "Tie"}: <strong>${winners.map(escapeHtml).join(", ")}</strong> with ${highest} point${highest === 1 ? "" : "s"}.</p><ol>${rows.join("")}</ol>`;
   } else {
+    let summary = "";
+    if (mode === "risky") {
+      summary = `<p>Questions answered: <strong>${questionIndex + (questionLocked ? 1 : 0)}</strong></p>`;
+    } else if (mode === "solo") {
+      summary = `<p>Cards played: <strong>${Math.min(questionIndex + (questionLocked ? 1 : 0), questions.length)}</strong> of ${questions.length}</p>`;
+    }
     $("finalScore").innerHTML =
-      `<p>Final score: <strong>${scores[0]}</strong> point${scores[0] === 1 ? "" : "s"}<span class="average-time">· Avg. answer: ${averageAnswerTime(0)}</span>.</p>`;
+      `${summary}<p>Final score: <strong>${scores[0]}</strong> point${scores[0] === 1 ? "" : "s"}<span class="average-time">· Avg. answer: ${averageAnswerTime(0)}</span>.</p>`;
   }
 }
 
