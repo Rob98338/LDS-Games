@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Operation: Called to Serve</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --navy: #16324f;
+      --blue: #285f82;
+      --gold: #f0b84b;
+      --cream: #f8f6f0;
+      --ink: #1e2933;
+      --muted: #5d6975;
+      --white: #fff;
+      --green: #27734a;
+      --border: #d9e0e5;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      line-height: 1.5;
+    }
+
+    .app {
+      width: min(760px, calc(100% - 28px));
+      margin: 28px auto;
+    }
+
+    header {
+      padding: 25px;
+      border-radius: 18px 18px 0 0;
+      background: var(--navy);
+      color: var(--white);
+      text-align: center;
+    }
+
+    header .eyebrow {
+      margin: 0 0 6px;
+      color: #d9e8f2;
+      font-size: .82rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.65rem, 5vw, 2.45rem);
+      line-height: 1.15;
+    }
+
+    header .tagline {
+      margin: 10px 0 0;
+      color: #f7e6bf;
+    }
+
+    main {
+      padding: clamp(18px, 4vw, 30px);
+      border-radius: 0 0 18px 18px;
+      background: var(--white);
+      box-shadow: 0 12px 34px #16324f18;
+    }
+
+    .setup,
+    .player-panel,
+    .card,
+    .timer-panel,
+    .rubric,
+    .summary-player {
+      border-radius: 14px;
+    }
+
+    .setup {
+      margin-bottom: 20px;
+      padding: 16px;
+      background: #f3f6f8;
+    }
+
+    .setup h2,
+    .player-panel h2 {
+      margin: 0 0 12px;
+      color: var(--navy);
+      font-size: 1.1rem;
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      color: var(--navy);
+      font-size: .92rem;
+      font-weight: 700;
+    }
+
+    select,
+    input[type="text"] {
+      width: 100%;
+      margin-top: 6px;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--white);
+      color: var(--ink);
+      font: inherit;
+    }
+
+    button {
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 10px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .08s ease, filter .15s ease;
+    }
+
+    button:hover:not(:disabled) { filter: brightness(.96); }
+    button:active:not(:disabled) { transform: scale(.98); }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    .primary { background: var(--blue); color: var(--white); }
+    .secondary { background: #eaf0f4; color: var(--navy); }
+    .gold { background: var(--gold); color: #34250a; }
+    .danger { background: #faecea; color: #96352f; }
+
+    .player-panel {
+      margin-bottom: 20px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      background: #fcfdfe;
+    }
+
+    .player-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .player-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .player-row.active {
+      border: 2px solid var(--gold);
+      background: #fffaf0;
+    }
+
+    .player-row input {
+      min-width: 0;
+      margin: 0;
+    }
+
+    .player-score {
+      color: var(--navy);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .round-info {
+      color: var(--navy);
+      font-weight: 750;
+    }
+
+    .card {
+      padding: clamp(18px, 4vw, 26px);
+      border: 2px solid var(--border);
+      background: #fcfdfe;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #eaf0f4;
+      color: var(--navy);
+      font-size: .82rem;
+      font-weight: 750;
+    }
+
+    .badge.level { background: #fff2d4; }
+
+    .card-title {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: clamp(1.25rem, 4vw, 1.65rem);
+    }
+
+    .prompt { margin: 0; font-size: 1.1rem; }
+
+    .timer-panel {
+      margin: 18px 0;
+      padding: 15px;
+      background: #f3f6f8;
+      text-align: center;
+    }
+
+    .active-player {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-weight: 800;
+    }
+
+    .timer {
+      margin-bottom: 11px;
+      color: var(--navy);
+      font-size: 2.5rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .timer.done { color: #96352f; }
+
+    .rubric {
+      margin: 18px 0;
+      padding: 15px;
+      background: var(--cream);
+    }
+
+    .rubric h3 {
+      margin: 0 0 8px;
+      color: var(--navy);
+      font-size: 1rem;
+    }
+
+    .rubric label {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin: 9px 0;
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .rubric input {
+      flex: 0 0 auto;
+      margin-top: 4px;
+      accent-color: var(--green);
+      transform: scale(1.1);
+    }
+
+    .actions,
+    .timer-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .actions { margin-top: 18px; }
+
+    .message {
+      min-height: 1.5em;
+      margin: 12px 0 0;
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .round-note {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .summary {
+      padding: clamp(18px, 4vw, 26px);
+      border: 2px solid #dbe9df;
+      border-radius: 14px;
+      background: #f7fbf7;
+    }
+
+    .summary h2 {
+      margin: 0 0 8px;
+      color: var(--navy);
+    }
+
+    .summary-intro {
+      margin: 0 0 18px;
+      color: var(--muted);
+    }
+
+    .summary-player {
+      margin: 14px 0;
+      padding: 15px;
+      border: 1px solid var(--border);
+      background: var(--white);
+    }
+
+    .summary-player h3 {
+      margin: 0 0 10px;
+      color: var(--navy);
+    }
+
+    .summary-total {
+      margin: 0 0 12px;
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .score-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .93rem;
+    }
+
+    .score-table th,
+    .score-table td {
+      padding: 9px 7px;
+      border-top: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .score-table th {
+      width: 43%;
+      color: var(--navy);
+    }
+
+    .score-table td.points {
+      width: 12%;
+      font-weight: 800;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .score-table td.note { color: var(--muted); }
+
+    .summary-encouragement {
+      margin: 12px 0 0;
+      padding: 11px 12px;
+      border-radius: 10px;
+      background: #f3f6f8;
+      color: var(--ink);
+    }
+
+    footer {
+      padding: 15px 6px 0;
+      color: var(--muted);
+      font-size: .82rem;
+      text-align: center;
+    }
+
+    [hidden] { display: none !important; }
+
+    @media (max-width: 560px) {
+      .setup-grid { grid-template-columns: 1fr; }
+      .player-list { grid-template-columns: 1fr; }
+      .topbar { align-items: flex-start; }
+      .actions button { flex: 1 1 auto; }
+      .score-table th { width: 42%; }
+      .score-table td.note { font-size: .86rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <p class="eyebrow">A challenge game for 1–6 players</p>
+      <h1>Operation: Called to Serve</h1>
+      <p class="tagline">Listen well. Serve with love. Grow together.</p>
+    </header>
+
+    <main>
+      <section class="setup" aria-labelledby="setupHeading">
+        <h2 id="setupHeading">Game setup</h2>
+        <div class="setup-grid">
+          <label for="playerCount">
+            Number of players
+            <select id="playerCount">
+              <option value="1">1 player</option>
+              <option value="2" selected>2 players</option>
+              <option value="3">3 players</option>
+              <option value="4">4 players</option>
+              <option value="5">5 players</option>
+              <option value="6">6 players</option>
+            </select>
+          </label>
+
+          <label for="cardsPerRound">
+            Cards per round
+            <select id="cardsPerRound">
+              <option value="1">1 card</option>
+              <option value="2">2 cards</option>
+              <option value="3" selected>3 cards</option>
+              <option value="4">4 cards</option>
+              <option value="5">5 cards</option>
+              <option value="6">6 cards</option>
+              <option value="7">7 cards</option>
+              <option value="8">8 cards</option>
+              <option value="9">9 cards</option>
+              <option value="10">10 cards</option>
+            </select>
+          </label>
+
+          <button class="primary" id="setupButton" type="button">Set up game</button>
+        </div>
+      </section>
+
+      <section class="player-panel" aria-labelledby="playersHeading">
+        <h2 id="playersHeading">Players and game scores</h2>
+        <div class="player-list" id="playerList"></div>
+      </section>
+
+      <div class="topbar">
+        <div class="round-info" id="roundInfo" aria-live="polite"></div>
+        <button class="danger" id="resetButton" type="button">Reset game</button>
+      </div>
+
+      <section class="card" id="challengeView" aria-live="polite">
+        <div class="card-meta">
+          <span class="badge level" id="levelBadge"></span>
+          <span class="badge" id="categoryBadge"></span>
+          <span class="badge"><span id="secondsLabel"></span> seconds</span>
+        </div>
+
+        <h2 class="card-title" id="cardTitle"></h2>
+        <p class="prompt" id="promptText"></p>
+
+        <div class="timer-panel">
+          <p class="active-player" id="activePlayer"></p>
+          <div class="timer" id="timer" role="timer" aria-live="off">00:00</div>
+          <div class="timer-controls">
+            <button class="primary" id="startButton" type="button">Start timer</button>
+            <button class="secondary" id="pauseButton" type="button">Pause</button>
+            <button class="secondary" id="addTimeButton" type="button">+15 seconds</button>
+          </div>
+        </div>
+
+        <div class="rubric">
+          <h3>Score this challenge — 1 point for each principle demonstrated</h3>
+          <label><input type="checkbox" class="point" data-category="care"> Love and charity — treat people with genuine care.</label>
+          <label><input type="checkbox" class="point" data-category="respect"> Respect — honor others’ beliefs, choices, boundaries, and dignity.</label>
+          <label><input type="checkbox" class="point" data-category="empathy"> Listen with empathy — seek to understand before responding.</label>
+          <label><input type="checkbox" class="point" data-category="humility"> Humility and honesty — don’t pretend to know everything; be willing to learn.</label>
+          <label><input type="checkbox" class="point" data-category="patience"> Patience and kindness — respond calmly, especially when conversations are difficult.</label>
+          <label><input type="checkbox" class="point" data-category="invitation"> Gentle, pressure-free invitations — let people make their own choices.</label>
+        </div>
+
+        <div class="actions">
+          <button class="gold" id="awardButton" type="button">Award points &amp; finish card</button>
+          <button class="secondary" id="nextButton" type="button" hidden>Next challenge</button>
+        </div>
+
+        <p class="message" id="message" aria-live="polite"></p>
+        <p class="round-note">
+          Players take turns in order. The active player earns the points for the card.
+          Each card can earn up to 6 points.
+        </p>
+      </section>
+
+      <section class="summary" id="roundSummary" aria-live="polite" hidden>
+        <h2 id="summaryHeading">Round summary</h2>
+        <p class="summary-intro" id="summaryIntro"></p>
+        <div id="summaryPlayers"></div>
+        <div class="actions">
+          <button class="primary" id="nextRoundButton" type="button">Start next round</button>
+        </div>
+      </section>
+
+      <footer>
+        Independently created game. Not an official publication of The Church of Jesus Christ of Latter-day Saints.
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const categories = [
+      { id: "care", name: "Love and charity", action: "showing genuine care" },
+      { id: "respect", name: "Respect", action: "honoring others’ beliefs, choices, boundaries, and dignity" },
+      { id: "empathy", name: "Listen with empathy", action: "listening to understand before responding" },
+      { id: "humility", name: "Humility and honesty", action: "being honest about what you know and staying willing to learn" },
+      { id: "patience", name: "Patience and kindness", action: "responding calmly and kindly, even when a conversation is difficult" },
+      { id: "invitation", name: "Gentle, pressure-free invitations", action: "inviting gently and leaving people free to choose" }
+    ];
+
+    const cards = [
+      { level: 1, category: "Listening", seconds: 30, title: "The 30-Second Message", prompt: "Share one simple thought about hope or faith in a way that feels natural and easy to understand." },
+      { level: 1, category: "Listening", seconds: 45, title: "Listen First", prompt: "Someone says, “I’ve had a rough week.” What could you say or ask before sharing advice or a message?" },
+      { level: 1, category: "Service", seconds: 30, title: "A Small Act of Service", prompt: "Think of one practical, considerate way to help someone in your neighborhood or community—without assuming what they need." },
+      { level: 1, category: "Invitations", seconds: 30, title: "A Friendly Invitation", prompt: "Invite someone to a church or community activity in a way that feels easy to accept, decline, or ask questions about." },
+      { level: 1, category: "Sharing", seconds: 45, title: "Make It Simple", prompt: "Explain a belief or principle in plain language, then ask whether the person would like to hear more." },
+      { level: 1, category: "Questions", seconds: 45, title: "A Question for You", prompt: "Ask two friendly, open-ended questions that show genuine interest in another person." },
+      { level: 1, category: "Service", seconds: 45, title: "Ask Before Helping", prompt: "Someone seems to need help. Show how you would offer assistance while respecting their answer." },
+      { level: 1, category: "Sharing", seconds: 30, title: "A Thought on Gratitude", prompt: "Share a simple thought about gratitude without pretending that everything is easy." },
+      { level: 1, category: "Listening", seconds: 45, title: "Check Your Understanding", prompt: "Summarize someone's concern in your own words, then ask if you understood them correctly." },
+      { level: 1, category: "Invitations", seconds: 45, title: "No Pressure", prompt: "Invite someone to an activity and make it clear that it's okay if they decline." },
+      { level: 2, category: "Questions", seconds: 45, title: "The Unexpected Question", prompt: "Someone asks a sincere question you don’t know how to answer. Respond honestly, respectfully, and without guessing." },
+      { level: 2, category: "Respect", seconds: 30, title: "Not Interested", prompt: "Someone politely says they’re not interested in talking. What do you say or do next?" },
+      { level: 2, category: "Plan B", seconds: 45, title: "The Appointment Cancels", prompt: "An appointment cancels at the last minute. As a team, come up with a helpful backup plan." },
+      { level: 2, category: "Listening", seconds: 60, title: "Different Backgrounds", prompt: "The person you’re speaking with has beliefs or experiences very different from yours. Name two ways to keep the conversation respectful and curious." },
+      { level: 2, category: "Companionship", seconds: 45, title: "A Tough Day", prompt: "Your companion seems discouraged after a difficult day. What’s one supportive thing you could say and one practical thing you could do together?" },
+      { level: 2, category: "Questions", seconds: 60, title: "I Don’t Know Yet", prompt: "A person asks about a teaching you’re unsure of. Show how you would say so and look for reliable information." },
+      { level: 2, category: "Invitations", seconds: 45, title: "Let Them Choose", prompt: "Invite someone to a discussion, but let them choose what they would like to talk about." },
+      { level: 2, category: "Empathy", seconds: 60, title: "A Difficult Experience", prompt: "Someone shares a painful experience. Respond in a way that acknowledges their feelings without trying to explain them away." },
+      { level: 2, category: "Plan B", seconds: 45, title: "The Schedule Changes", prompt: "Your plans change unexpectedly. Suggest a useful, safe alternative that works for everyone." },
+      { level: 2, category: "Respect", seconds: 45, title: "A Different Opinion", prompt: "Someone disagrees with you. Respond by showing that you understand at least one part of their perspective." },
+      { level: 3, category: "Companionship", seconds: 60, title: "The Companion Disagreement", prompt: "You and your companion disagree about how to spend an unexpected free hour. Work out a plan that lets both people feel heard." },
+      { level: 3, category: "Listening", seconds: 60, title: "The Conversation Changes", prompt: "You planned to discuss one topic, but the person brings up something important to them. Decide how to respond without rushing back to your plan." },
+      { level: 3, category: "Empathy", seconds: 60, title: "A Difficult Past Experience", prompt: "Someone says a past religious experience left them hurt or wary. Practice a response that acknowledges their feelings without arguing them away." },
+      { level: 3, category: "Teamwork", seconds: 90, title: "Two Needs, One Plan", prompt: "One teammate is tired; the other is worried about an unfinished task. Agree on a kind, realistic next step that considers both concerns." },
+      { level: 3, category: "Listening", seconds: 45, title: "Pause, Reflect, Respond", prompt: "Listen to another player describe a concern. Before answering, summarize what you heard and ask whether you understood correctly." },
+      { level: 3, category: "Plan B", seconds: 60, title: "Plan B Plus", prompt: "An appointment cancels, it starts raining, and your planned activity is no longer possible. Create a safe, useful backup plan together." },
+      { level: 3, category: "Perspective", seconds: 60, title: "Switch Perspectives", prompt: "Describe the situation from the other person’s point of view, then come up with a response that shows understanding." },
+      { level: 3, category: "Teamwork", seconds: 60, title: "The Team Debrief", prompt: "After a challenging interaction, name one thing the team handled well and one thing to learn from—without blaming anyone." },
+      { level: 3, category: "Questions", seconds: 60, title: "Find a Reliable Answer", prompt: "A question needs research. Explain how your team would look for a trustworthy answer instead of guessing." },
+      { level: 3, category: "Boundaries", seconds: 60, title: "Respect the Boundary", prompt: "Someone sets a clear personal boundary. Decide how to respect it and continue, if appropriate, without pressure." }
+    ];
+
+    const levelNames = {
+      1: "Warm-Up",
+      2: "Curveball",
+      3: "Team Mission"
+    };
+
+    let players = [];
+    let currentCard = null;
+    let remaining = 0;
+    let intervalId = null;
+    let round = 1;
+    let cardsCompleted = 0;
+    let cardsPerRound = 3;
+    let activePlayerIndex = 0;
+    let cardFinished = false;
+    let previousCardIndex = -1;
+
+    const timerEl = document.getElementById("timer");
+    const messageEl = document.getElementById("message");
+    const challengeView = document.getElementById("challengeView");
+    const roundSummary = document.getElementById("roundSummary");
+
+    function makeCategoryTotals() {
+      return Object.fromEntries(categories.map(category => [category.id, 0]));
+    }
+
+    function makePlayer(name, index) {
+      return {
+        name: name || `Player ${index + 1}`,
+        total: 0,
+        roundTotal: 0,
+        roundCategories: makeCategoryTotals(),
+        cardsThisRound: 0
+      };
+    }
+
+    function stopTimer() {
+      if (intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    }
+
+    function updateTimer() {
+      const minutes = Math.floor(remaining / 60).toString().padStart(2, "0");
+      const seconds = (remaining % 60).toString().padStart(2, "0");
+      timerEl.textContent = `${minutes}:${seconds}`;
+      timerEl.classList.toggle("done", remaining === 0);
+    }
+
+    function startTimer() {
+      if (intervalId !== null || remaining <= 0 || cardFinished) return;
+
+      intervalId = setInterval(() => {
+        remaining = Math.max(0, remaining - 1);
+        updateTimer();
+
+        if (remaining === 0) {
+          stopTimer();
+          messageEl.textContent = "Time! Finish your thought, then score the card.";
+        }
+      }, 1000);
+    }
+
+    function drawRandomCard() {
+      let index = Math.floor(Math.random() * cards.length);
+
+      if (cards.length > 1) {
+        while (index === previousCardIndex) {
+          index = Math.floor(Math.random() * cards.length);
+        }
+      }
+
+      previousCardIndex = index;
+      return cards[index];
+    }
+
+    function renderPlayers() {
+      const list = document.getElementById("playerList");
+      list.replaceChildren();
+
+      players.forEach((player, index) => {
+        const row = document.createElement("div");
+        row.className = "player-row";
+        row.dataset.playerIndex = String(index);
+
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.maxLength = 24;
+        nameInput.setAttribute("aria-label", `Player ${index + 1} name`);
+        nameInput.value = player.name;
+        nameInput.addEventListener("input", () => {
+          player.name = nameInput.value;
+          updateActivePlayer();
+        });
+
+        const score = document.createElement("span");
+        score.className = "player-score";
+        score.textContent = `${player.total} pts`;
+
+        row.append(nameInput, score);
+        list.append(row);
+      });
+
+      updateActivePlayer();
+    }
+
+    function updateActivePlayer() {
+      const activePlayer = players[activePlayerIndex];
+      const name = activePlayer?.name.trim() || `Player ${activePlayerIndex + 1}`;
+
+      document.getElementById("activePlayer").textContent =
+        `Up now: ${name}`;
+
+      document.querySelectorAll(".player-row").forEach((row, index) => {
+        row.classList.toggle("active", index === activePlayerIndex);
+      });
+    }
+
+    function updateRoundInfo() {
+      document.getElementById("roundInfo").textContent =
+        `Round ${round} · Card ${cardsCompleted + 1} of ${cardsPerRound}`;
+    }
+
+    function renderCard() {
+      if (!currentCard) return;
+
+      document.getElementById("levelBadge").textContent =
+        `Level ${currentCard.level}: ${levelNames[currentCard.level]}`;
+      document.getElementById("categoryBadge").textContent = currentCard.category;
+      document.getElementById("secondsLabel").textContent = currentCard.seconds;
+      document.getElementById("cardTitle").textContent = currentCard.title;
+      document.getElementById("promptText").textContent = currentCard.prompt;
+
+      remaining = currentCard.seconds;
+      cardFinished = false;
+      updateTimer();
+      updateRoundInfo();
+      updateActivePlayer();
+      messageEl.textContent = "";
+
+      document.querySelectorAll(".point").forEach(box => {
+        box.checked = false;
+        box.disabled = false;
+      });
+
+      document.getElementById("awardButton").hidden = false;
+      document.getElementById("awardButton").disabled = false;
+      document.getElementById("nextButton").hidden = true;
+      document.getElementById("startButton").disabled = false;
+      document.getElementById("pauseButton").disabled = false;
+      document.getElementById("addTimeButton").disabled = false;
+    }
+
+    function beginGame(resetScores) {
+      stopTimer();
+
+      const count = Number(document.getElementById("playerCount").value);
+      cardsPerRound = Number(document.getElementById("cardsPerRound").value);
+
+      const oldNames = resetScores ? [] : players.map(player => player.name);
+
+      players = Array.from({ length: count }, (_, index) =>
+        makePlayer(oldNames[index], index)
+      );
+
+      round = 1;
+      cardsCompleted = 0;
+      activePlayerIndex = 0;
+      previousCardIndex = -1;
+
+      document.getElementById("roundSummary").hidden = true;
+      challengeView.hidden = false;
+
+      renderPlayers();
+      currentCard = drawRandomCard();
+      renderCard();
+    }
+
+    function awardPoints() {
+      if (cardFinished || !players.length) return;
+
+      stopTimer();
+
+      const player = players[activePlayerIndex];
+      const checkedBoxes = [...document.querySelectorAll(".point:checked")];
+      const earned = checkedBoxes.length;
+
+      player.total += earned;
+      player.roundTotal += earned;
+      player.cardsThisRound += 1;
+
+      checkedBoxes.forEach(box => {
+        const categoryId = box.dataset.category;
+        player.roundCategories[categoryId] += 1;
+      });
+
+      cardsCompleted += 1;
+      cardFinished = true;
+
+      document.querySelectorAll(".point").forEach(box => {
+        box.disabled = true;
+      });
+
+      document.getElementById("awardButton").hidden = true;
+      document.getElementById("startButton").disabled = true;
+      document.getElementById("pauseButton").disabled = true;
+      document.getElementById("addTimeButton").disabled = true;
+
+      renderPlayers();
+
+      const playerName = player.name.trim() || `Player ${activePlayerIndex + 1}`;
+      messageEl.textContent = earned === 0
+        ? `${playerName}, thanks for taking on the challenge. Every round is a chance to practice.`
+        : `${playerName} earned ${earned} ${earned === 1 ? "point" : "points"} for showing these principles.`;
+
+      if (cardsCompleted >= cardsPerRound) {
+        document.getElementById("nextButton").hidden = true;
+        showRoundSummary();
+      } else {
+        activePlayerIndex = (activePlayerIndex + 1) % players.length;
+        updateActivePlayer();
+        document.getElementById("nextButton").hidden = false;
+      }
+    }
+
+    function makeCategoryNote(category, score, opportunities) {
+      if (opportunities === 0) {
+        return "No card this round gave you a turn to earn this point—there’ll be another chance next round.";
+      }
+
+      const proportion = score / opportunities;
+
+      if (score === 0) {
+        return `A gentle focus for next round: look for a moment to practice ${category.action}.`;
+      }
+
+      if (proportion >= 0.6) {
+        return `Wonderful work ${category.action}—that strength really showed this round!`;
+      }
+
+      if (score === opportunities) {
+        return `You showed ${category.action} on every turn this round—fantastic consistency!`;
+      }
+
+      return `Nice start ${category.action}. Keep looking for small chances to build this strength next round.`;
+    }
+
+    function showRoundSummary() {
+      stopTimer();
+      challengeView.hidden = true;
+      roundSummary.hidden = false;
+
+      document.getElementById("summaryHeading").textContent = `Round ${round} summary`;
+      document.getElementById("summaryIntro").textContent =
+        `Here’s how everyone practiced the six principles this round. Celebrate what went well, and treat each next step as a chance to grow.`;
+
+      const container = document.getElementById("summaryPlayers");
+      container.replaceChildren();
+
+      players.forEach((player, index) => {
+        const card = document.createElement("article");
+        card.className = "summary-player";
+
+        const heading = document.createElement("h3");
+        heading.textContent = player.name.trim() || `Player ${index + 1}`;
+
+        const total = document.createElement("p");
+        total.className = "summary-total";
+        total.textContent =
+          `Round points: ${player.roundTotal} · Game total: ${player.total}`;
+
+        const table = document.createElement("table");
+        table.className = "score-table";
+
+        const caption = document.createElement("caption");
+        caption.className = "sr-only";
+        caption.textContent = `Round ${round} category points for ${heading.textContent}`;
+
+        const body = document.createElement("tbody");
+
+        categories.forEach(category => {
+          const row = document.createElement("tr");
+
+          const nameCell = document.createElement("th");
+          nameCell.scope = "row";
+          nameCell.textContent = category.name;
+
+          const pointsCell = document.createElement("td");
+          pointsCell.className = "points";
+          const score = player.roundCategories[category.id];
+          pointsCell.textContent = `${score} / ${player.cardsThisRound}`;
+
+          const noteCell = document.createElement("td");
+          noteCell.className = "note";
+          noteCell.textContent = makeCategoryNote(
+            category,
+            score,
+            player.cardsThisRound
+          );
+
+          row.append(nameCell, pointsCell, noteCell);
+          body.append(row);
+        });
+
+        table.append(caption, body);
+
+        const encouragement = document.createElement("p");
+        encouragement.className = "summary-encouragement";
+        encouragement.textContent = player.roundTotal > 0
+          ? "Every point reflects a moment you chose to practice a good quality. Keep building on what you did well."
+          : "Thank you for joining in. Showing up and trying the challenges is a good beginning—choose one principle to practice next round.";
+
+        card.append(heading, total, table, encouragement);
+        container.append(card);
+      });
+    }
+
+    function startNextRound() {
+      stopTimer();
+
+      round += 1;
+      cardsCompleted = 0;
+
+      players.forEach(player => {
+        player.roundTotal = 0;
+        player.roundCategories = makeCategoryTotals();
+        player.cardsThisRound = 0;
+      });
+
+      activePlayerIndex = 0;
+      currentCard = drawRandomCard();
+
+      roundSummary.hidden = true;
+      challengeView.hidden = false;
+
+      renderPlayers();
+      renderCard();
+    }
+
+    function resetGame() {
+      const confirmed = window.confirm(
+        "Reset the game and clear all player scores?"
+      );
+
+      if (!confirmed) return;
+
+      beginGame(true);
+    }
+
+    document.getElementById("setupButton").addEventListener("click", () => beginGame(false));
+    document.getElementById("resetButton").addEventListener("click", resetGame);
+    document.getElementById("startButton").addEventListener("click", startTimer);
+    document.getElementById("pauseButton").addEventListener("click", stopTimer);
+
+    document.getElementById("addTimeButton").addEventListener("click", () => {
+      if (cardFinished) return;
+      remaining += 15;
+      updateTimer();
+      messageEl.textContent = "Added 15 seconds.";
+    });
+
+    document.getElementById("awardButton").addEventListener("click", awardPoints);
+
+    document.getElementById("nextButton").addEventListener("click", () => {
+      currentCard = drawRandomCard();
+      renderCard();
+    });
+
+    document.getElementById("nextRoundButton").addEventListener("click", startNextRound);
+
+    beginGame(true);
+  </script>
+</body>
+</html>
