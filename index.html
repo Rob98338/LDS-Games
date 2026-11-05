@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Game Selection</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #f4f7fa;
+      color: #182b3a;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(760px, 100%);
+      margin: 40px auto;
+    }
+
+    header {
+      padding: 28px 22px;
+      border-radius: 16px;
+      background: #16324f;
+      color: #fff;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
+    }
+
+    header p {
+      margin: 10px 0 0;
+      color: #e0eaf1;
+    }
+
+    .game-list {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .game {
+      padding: 22px;
+      border: 1px solid #d5dee6;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 4px 14px #16324f0d;
+    }
+
+    .game h2 {
+      margin: 0 0 8px;
+      color: #16324f;
+      font-size: 1.3rem;
+    }
+
+    .game p {
+      margin: 0 0 16px;
+      color: #536575;
+    }
+
+    .game a {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 9px;
+      background: #285f82;
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .game a:hover {
+      background: #16324f;
+    }
+
+    .game a:focus-visible {
+      outline: 3px solid #f0b84b;
+      outline-offset: 3px;
+    }
+
+    footer {
+      margin-top: 24px;
+      color: #647482;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Choose a Game</h1>
+      <p>Select a game below to play.</p>
+    </header>
+
+    <section class="game-list" aria-label="Available games">
+      <article class="game">
+        <h2>Three Truths &amp; a Lie Quorum Challenge</h2>
+        <p>Play the Three Truths &amp; a Lie Quorum Challenge.</p>
+        <a href="./first-game.html">Play Three Truths &amp; a Lie Quorum Challenge</a>
+      </article>
+
+      <article class="game">
+        <h2>Called to Serve</h2>
+        <p>Play the Called to Serve game.</p>
+        <a href="./called-to-serve/">Play Called to Serve</a>
+      </article>
+    </section>
+
+    <footer>
+      Choose a game to get started.
+    </footer>
+  </main>
+</body>
+</html>
