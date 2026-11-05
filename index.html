@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LDS Games</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #f4f7fa;
+      color: #182b3a;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(760px, 100%);
+      margin: 40px auto;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      color: #16324f;
+    }
+
+    .intro {
+      margin-top: 0;
+      color: #536575;
+    }
+
+    .game-list {
+      display: grid;
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    .game {
+      padding: 20px;
+      border: 1px solid #d5dee6;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 4px 14px #16324f0d;
+    }
+
+    .game h2 {
+      margin: 0 0 8px;
+      color: #16324f;
+    }
+
+    .game p {
+      margin: 0 0 16px;
+      color: #536575;
+    }
+
+    .game a {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 9px;
+      background: #285f82;
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .game a:hover,
+    .game a:focus-visible {
+      background: #16324f;
+    }
+
+    .game a:focus-visible {
+      outline: 3px solid #f0b84b;
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>LDS Games</h1>
+    <p class="intro">Choose a game to play.</p>
+
+    <section class="game-list" aria-label="Available games">
+      <article class="game">
+        <h2>My First Game</h2>
+        <p>Play the game that was previously on the homepage.</p>
+        <a href="./first-game.html">Play My First Game</a>
+      </article>
+
+      <article class="game">
+        <h2>Called to Serve</h2>
+        <p>Play the Called to Serve game.</p>
+        <a href="./called-to-serve/">Play Called to Serve</a>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
